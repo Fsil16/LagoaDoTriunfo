@@ -1,170 +1,250 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<style>
-    body { 
-        font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; 
-        background-color: #f4f7f6; 
-        margin: 0; padding: 10px; color: #333;
-        display: flex; justify-content: center;
-    }
-    .container { 
-        width: 290mm; 
-        /* Altura reduzida para um perfil mais fino */
-        min-height: 80mm; 
-        margin: 0 auto; 
-        background: #ffffff; 
-        padding: 20px 35px; /* Reduzi o padding vertical */        
-        border: 1px solid #d1d1d1;
-        box-sizing: border-box;
-    }
-    
-    .header { 
-        border-bottom: 3px solid #27ae60; 
-        margin-bottom: 15px; 
-        padding-bottom: 5px; 
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-    .title { font-weight: 800; font-size: 16px; text-transform: uppercase; margin: 0; }
-    .subtitle { font-size: 11px; color: #666; font-weight: 600; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Operacional | AgroSB</title>
+    <style>
+        /* DEFINIÇÕES DE CORES AGROSB */
+        :root {
+            --azul-agrob: #00264b; 
+            --cinza-fundo: #f8fafc;
+            --branco: #ffffff;
+            --status-andamento: #f39c12; /* Amarelo/Laranja para atenção */
+            --texto-principal: #1e293b;
+        }
 
-    .section-title { 
-        font-size: 11px; 
-        font-weight: 700; 
-        margin-bottom: 15px; 
-        text-transform: uppercase; 
-        color: #2c3e50;
-    }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--cinza-fundo);
+            color: var(--texto-principal);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    /* Sistema de Proporção Real */
-    .chart-area { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
-    
-    .unit-row { display: flex; align-items: center; gap: 20px; }
-    .unit-label { width: 90px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-    
-    .bar-wrapper-lagoa1 { flex: 10.5; } 
-    .bar-wrapper-lagoa2 { flex: 13.5; } 
-    .spacer { flex: 3; } 
+        /* CABEÇALHO CORPORATIVO */
+        header {
+            background-color: var(--branco);
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid var(--azul-agrob);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-    .bar-track { 
-        height: 26px; /* Altura da barra levemente reduzida */
-        display: flex; 
-        border-radius: 3px; 
-        overflow: hidden; 
-        border: 1px solid #bbb;
-        background: #eee;
-    }
+        .logo-container img {
+            height: 90px;
+            width: auto;
+        }
 
-    .bg-concluido { background: #13db2e; } 
-    .bg-reforma { background: #fff400; }   
-    .bg-construir { background: #de0000; } 
+        .header-title {
+            text-align: right;
+        }
 
-    .segment { 
-        height: 100%; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        color: white; 
-        font-size: 10px; 
-        font-weight: 800; 
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7), -1px -1px 2px rgba(0, 0, 0, 0.7);
-    
-    }
+        .header-title h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--azul-agrob);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    .legend { 
-        display: flex; 
-        gap: 20px; 
-        margin-bottom: 20px; 
-        font-size: 10px; 
-        font-weight: 700; 
-        border-bottom: 1px solid #eee; 
-        padding-bottom: 10px; 
-    }
-    .legend-item { display: flex; align-items: center; gap: 6px; }
-    .box { width: 12px; height: 12px; border-radius: 2px; }
+        .header-title p {
+            margin: 5px 0 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+        }
 
-    /* Tabela Compacta */
-    .summary-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .summary-table th { text-align: left; padding: 8px; background: #f8f9fa; border-bottom: 2px solid #333; text-transform: uppercase; }
-    .summary-table td { padding: 6px 8px; border-bottom: 1px solid #eee; }
-    .row-total { background: #f8f9fa; font-weight: 800; border-top: 2px solid #333; }
-</style>
+        /* ÁREA DE CONTEÚDO */
+        main {
+            flex: 1;
+            padding: 50px 6%;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h2 {
+            font-size: 28px;
+            color: var(--azul-agrob);
+            margin-bottom: 15px;
+        }
+
+        .hero-section p {
+            font-size: 16px;
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* GRID DE OPERAÇÕES */
+        .operations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .op-card {
+            background-color: var(--branco);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .op-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--azul-agrob);
+        }
+
+        .op-icon {
+            background-color: #f1f5f9;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .op-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--azul-agrob);
+        }
+
+        .op-details {
+            padding: 30px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .op-details h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+            color: var(--azul-agrob);
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .op-details p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: var(--status-andamento);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .op-footer {
+            background-color: var(--azul-agrob);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* RODAPÉ */
+        footer {
+            background-color: var(--azul-agrob);
+            color: #94a3b8;
+            padding: 30px;
+            text-align: center;
+            font-size: 11px;
+            border-top: 4px solid #f39c12;
+        }
+
+        footer strong { color: white; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Cercamento de PRODES</h1>
-            <div class="subtitle">Fazenda Lagoa do Triunfo | 24/03/2026</div>
-        </div>
 
-        <div class="legend">
-            <div class="legend-item"><div class="box bg-concluido"></div> CONCLUÍDO &nbsp;</div>
-            <div class="legend-item"><div class="box bg-reforma"></div> FALTA REFORMAR &nbsp;</div>
-            <div class="legend-item"><div class="box bg-construir"></div> FALTA CONSTRUIR &nbsp;</div>
+    <header>
+        <div class="logo-container">
+            <img src="LogomarcaAgroSB.png" alt="Logomarca AgroSB">
         </div>
+        <div class="header-title">
+            <h1>Painel de Monitoramento</h1>
+            <p>Fazenda Lagoa do Triunfo | Gestão Ambiental</p>
+        </div>
+    </header>
 
-        <div class="chart-area">
-            <div class="unit-row">
-                <div class="unit-label">Lagoa 1</div>
-                <div class="bar-wrapper-lagoa1">
-                    <div class="bar-track">
-                        <div class="segment bg-concluido" style="width: 15.2%;">1.6</div>
-                        <div class="segment bg-reforma" style="width: 21.9%;">2.3</div>
-                        <div class="segment bg-construir" style="width: 62.9%;">6.6</div>
-                    </div>
+    <main>
+        <section class="hero-section">
+            <h2>Gestão de Operações em Campo</h2>
+            <p>Acompanhamento técnico para a diretoria: Status físico de cercas, limpeza de áreas e aplicação de insumos.</p>
+        </section>
+
+        <div class="operations-grid">
+            
+            <a href="limpeza-pasto.html" class="op-card">
+                <div class="op-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 14.5l-2.8-2.8c-.3-.3-.7-.5-1.1-.5h-6.8l-1.6-3.2c-.3-.7-1-1.1-1.8-1.1H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-4h1.5l1.3 1.3c.4.4 1 .4 1.4 0l.6-.6c.4-.4.4-1.1 0-1.5z"/></svg>
                 </div>
-                <div class="spacer"></div> 
-            </div>
-
-            <div class="unit-row">
-                <div class="unit-label">Lagoa 2</div>
-                <div class="bar-wrapper-lagoa2">
-                    <div class="bar-track">
-                        <div class="segment bg-concluido" style="width: 69.6%;">9.4</div>
-                        <div class="segment bg-reforma" style="width: 8.9%;">1.2</div>
-                        <div class="segment bg-construir" style="width: 21.5%;">2.9</div>
-                    </div>
+                <div class="op-details">
+                    <h3>Limpeza de Pastagens</h3>
+                    <p>Operações com correntão em áreas de Reserva Ambiental e PRODES.</p>
+                    <div class="badge-status">Em Andamento</div>
                 </div>
-            </div>
-        </div>
+                <div class="op-footer">ABRIR MAPA DE ÁREAS</div>
+            </a>
 
-        <table class="summary-table">
-            <thead>
-                <tr>
-                    <th>Unidade</th>
-                    <th>Concluído</th>
-                    <th>Falta Reformar</th>
-                    <th>Falta Construir</th>
-                    <th style="text-align: right;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Lagoa 1</td>
-                    <td>1,6 km</td>
-                    <td>2,3 km</td>
-                    <td>6,6 km</td>
-                    <td style="text-align: right;"><strong>10,5 km</strong></td>
-                </tr>
-                <tr>
-                    <td>Lagoa 2</td>
-                    <td>9,4 km</td>
-                    <td>1,2 km</td>
-                    <td>2,9 km</td>
-                    <td style="text-align: right;"><strong>13,5 km</strong></td>
-                </tr>
-                <tr class="row-total">
-                    <td>TOTAL GERAL</td>
-                    <td>11,0 km</td>
-                    <td>3,5 km</td>
-                    <td>9,5 km</td>
-                    <td style="text-align: right;">24,0 km</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <a href="construcao-cercas.html" class="op-card">
+                <div class="op-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 14v-4c0-1.1-.9-2-2-2h-3v-3c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v3H3c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h3v3c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-3h3c1.1 0 2-.9 2-2z"/></svg>
+                </div>
+                <div class="op-details">
+                    <h3>Construção de Cercas</h3>
+                    <p>Relatórios de KM concluídos e cronograma de cercamento de divisas.</p>
+                    <div class="badge-status">Em Andamento</div>
+                </div>
+                <div class="op-footer">ABRIR RELATÓRIO DE KM</div>
+            </a>
+
+            <a href="aplicacao-herbicida.html" class="op-card">
+                <div class="op-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"/></svg>
+                </div>
+                <div class="op-details">
+                    <h3>Aplicação de Herbicida</h3>
+                    <p>Controle químico de invasoras e regeneração assistida em campo.</p>
+                    <div class="badge-status">Em Andamento</div>
+                </div>
+                <div class="op-footer">ABRIR MAPA DE APLICAÇÃO</div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <p><strong>AgroSB</strong> - Tecnologia e Monitoramento no Agronegócio</p>
+        <p>Acesso Restrito: Uso Interno e Auditoria Fazenda Lagoa do Triunfo | 2026</p>
+    </footer>
+
 </body>
 </html>
