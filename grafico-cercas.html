@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --reforma: #FFD600;
+        --cerca-nova: #27ae60;
+        --desmanche: #FF3D00;
+        --aceiro: #0f9ed5;
+        --fundo: #ffffff;
+    }
+
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: transparent; 
+        margin: 0; padding: 10px; color: #1e293b;
+        overflow-x: hidden;
+    }
+
+    .container { 
+        background: var(--fundo); 
+        padding: 20px; 
+        border-radius: 12px;
+    }
+    
+    .header { border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 10px; }
+    .title { font-weight: 800; font-size: 16px; text-transform: uppercase; margin: 0; color: #00264b; }
+
+    .date-info {
+        font-size: 11px; color: #64748b; margin-top: 8px;
+        display: flex; gap: 20px; font-weight: 500;
+    }
+
+    @keyframes slideIn {
+        from { width: 0; opacity: 0; }
+        to { width: var(--seg-width); opacity: 1; }
+    }
+
+    .overall-progress-section { margin-bottom: 30px; }
+    .overall-label { font-size: 11px; font-weight: 700; margin-bottom: 10px; display: block; color: #475569; }
+    
+    .overall-bar { 
+        height: 28px; background: #f1f5f9; border-radius: 6px; 
+        overflow: hidden; border: 1px solid #e2e8f0; position: relative;
+    }
+    
+    .done-main { 
+        background: linear-gradient(90deg, #27ae60, #2ecc71); 
+        height: 100%; color: white; font-size: 10px; 
+        display: flex; align-items: center; justify-content: center; font-weight: 800;
+        width: 100%;
+    }
+
+    .legend { display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; font-weight: 600; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .box { width: 14px; height: 14px; border-radius: 3px; }
+
+    .retiro-block { 
+        display: flex; align-items: center; margin-bottom: 12px; gap: 15px; 
+        padding: 8px; border-radius: 6px;
+    }
+
+    .label-row { width: 200px; flex-shrink: 0; font-size: 11px; }
+    .name { font-weight: 700; color: #00264b; display: block; }
+    .area { font-size: 10px; color: #94a3b8; }
+    
+    .bar-wrapper { flex-grow: 1; }
+
+    .bar-container { 
+        height: 18px; 
+        background: #f1f5f9; 
+        border-radius: 4px; 
+        overflow: hidden; 
+        border: 1px solid #e2e8f0; 
+        display: flex; 
+        width: 100%; 
+    }
+    
+    .segment {
+        height: 100%;
+        animation: slideIn 1.2s ease-out forwards;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        color: white;
+        font-weight: 800;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .summary-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11px; }
+    .summary-table th { text-align: left; padding: 12px; background: #00264b; color: #fff; }
+    .summary-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+    .text-right { text-align: right; }
+    .row-total { background: #f8fafc; font-weight: 800; color: #00264b; border-top: 2px solid #00264b; }
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Monitoramento de Cercas</h1>
+            <div class="date-info">
+                <span>📅 INÍCIO: 01/01/2026</span>
+                <span>🔄 ATUALIZAÇÃO: 24/03/2026</span>
+                <span>🎯 META: 21.000 m/mês</span>
+            </div>
+        </div>
+
+        <div class="overall-progress-section">
+            <span class="overall-label">Status Consolidado (Realizado vs Total Projeto)</span>
+            <div class="overall-bar">
+                <div class="done-main">67.170 m Realizados (Meta: 63.000 m)</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="box" style="background:var(--reforma)"></div> Reforma</div>
+            <div class="legend-item"><div class="box" style="background:var(--cerca-nova)"></div> Nova</div>
+            <div class="legend-item"><div class="box" style="background:var(--desmanche)"></div> Desmanche</div>
+            <div class="legend-item"><div class="box" style="background:var(--aceiro)"></div> Aceiro</div>
+        </div>
+
+       
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">OURO NEGRO</span><span class="area">39.950,2 m</span></div>
+            <div class="bar-wrapper">
+                <div class="bar-container">
+                    <div class="segment" style="background:var(--cerca-nova); --seg-width: 2.26%;">2.2%</div>
+                    <div class="segment" style="background:var(--desmanche); --seg-width: 40.09%;">40.1%</div>
+                    <div class="segment" style="background:var(--reforma); --seg-width: 57.42%;">57.4%</div>
+                    <div class="segment" style="background:var(--remanga); --seg-width: 0.22%;">0.2%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">SERTAOZINHO</span><span class="area">43.658,2 m</span></div>
+            <div class="bar-wrapper">
+                <div class="bar-container">
+                    <div class="segment" style="background:var(--cerca-nova); --seg-width: 34.95%;">34.9%</div>
+                    <div class="segment" style="background:var(--desmanche); --seg-width: 58.60%;">58.6%</div>
+                    <div class="segment" style="background:var(--reforma); --seg-width: 6.45%;">6.4%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">NOVO MUNDO</span><span class="area">9.435,7 m</span></div>
+            <div class="bar-wrapper">
+                <div class="bar-container">
+                    <div class="segment" style="background:var(--aceiro); --seg-width: 63.85%;">63.8%</div>
+                    <div class="segment" style="background:var(--cerca-nova); --seg-width: 36.15%;">36.1%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">POÇO PRETO</span><span class="area">12.428,8 m</span></div>
+            <div class="bar-wrapper">
+                <div class="bar-container">
+                    <div class="segment" style="background:var(--cerca-nova); --seg-width: 47.22%;">47.2%</div>
+                    <div class="segment" style="background:var(--desmanche); --seg-width: 44.77%;">44.8%</div>
+                    <div class="segment" style="background:var(--reforma); --seg-width: 8.01%; color:#333;">8.0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">COCAL</span><span class="area">10.537,2 m</span></div>
+            <div class="bar-wrapper">
+                <div class="bar-container">
+                    <div class="segment" style="background:var(--cerca-nova); --seg-width: 36.70%;">36.7%</div>
+                    <div class="segment" style="background:var(--desmanche); --seg-width: 36.70%;">36.7%</div>
+                    <div class="segment" style="background:var(--reforma); --seg-width: 26.60%; color:#333;">26.6%</div>
+                </div>
+            </div>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Classe de Operação</th>
+                    <th class="text-right">Extensão (m)</th>
+                    <th class="text-right">Progresso (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Reforma</td><td class="text-right">36.168,75</td><td class="text-right">34,18%</td></tr>
+                <tr><td>Desmanche</td><td class="text-right">32.461,85</td><td class="text-right">30,68%</td></tr>
+                <tr><td>Cerca Nova</td><td class="text-right">31.002,00</td><td class="text-right">29,30%</td></tr>
+                <tr><td>Aceiro</td><td class="text-right">6.024,26</td><td class="text-right">5,69%</td></tr>
+                <tr class="row-total">
+                    <td>TOTAL GERAL ACUMULADO</td>
+                    <td class="text-right">105.745,33</td>
+                    <td class="text-right">100,00%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
