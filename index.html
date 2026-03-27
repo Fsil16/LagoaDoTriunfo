@@ -3,248 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Operacional | AgroSB</title>
+    <title>Painel Executivo | AgroSB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* DEFINIÇÕES DE CORES AGROSB */
         :root {
-            --azul-agrob: #00264b; 
-            --cinza-fundo: #f8fafc;
+            --azul-agrob: #00264b;
+            --azul-destaque: #1a3c61;
+            --ouro: #f39c12;
+            --fundo: #f8fafc;
             --branco: #ffffff;
-            --status-andamento: #f39c12; /* Amarelo/Laranja para atenção */
-            --texto-principal: #1e293b;
+            --texto: #1e293b;
         }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--cinza-fundo);
-            color: var(--texto-principal);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--fundo); color: var(--texto); line-height: 1.6; }
 
-        /* CABEÇALHO CORPORATIVO */
+        /* CABEÇALHO SUPERIOR */
         header {
-            background-color: var(--branco);
-            padding: 20px 6%;
+            background-color: var(--azul-agrob);
+            color: white;
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 5px solid var(--azul-agrob);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .logo-container img {
-            height: 90px;
-            width: auto;
-        }
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+        .logo-area img { height: 55px; filter: brightness(0) invert(1); }
+        .logo-area h1 { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 20px; }
 
-        .header-title {
-            text-align: right;
-        }
-
-        .header-title h1 {
-            margin: 0;
-            font-size: 20px;
-            color: var(--azul-agrob);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .header-title p {
-            margin: 5px 0 0;
-            font-size: 11px;
+        /* NAVEGAÇÃO SUPERIOR */
+        nav { display: flex; gap: 10px; }
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 12px;
             font-weight: 700;
-            color: #64748b;
+            text-transform: uppercase;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { background: var(--azul-destaque); color: white; }
+
+        /* ÁREA DE INDICADORES (KPIs) */
+        .kpi-section {
+            background: var(--branco);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 25px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
         }
 
-        /* ÁREA DE CONTEÚDO */
-        main {
-            flex: 1;
-            padding: 50px 6%;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .kpi-box { border-left: 4px solid var(--ouro); padding-left: 15px; }
+        .kpi-box span { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .kpi-box h2 { font-size: 24px; color: var(--azul-agrob); margin: 5px 0; }
+        .kpi-box p { font-size: 11px; font-weight: 600; color: #22c55e; }
 
-        .hero-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+        /* CONTEÚDO PRINCIPAL */
+        main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
 
-        .hero-section h2 {
-            font-size: 28px;
-            color: var(--azul-agrob);
-            margin-bottom: 15px;
-        }
+        .welcome-msg { margin-bottom: 40px; }
+        .welcome-msg h2 { font-size: 24px; color: var(--azul-agrob); }
+        .welcome-msg p { color: #64748b; font-size: 14px; }
 
-        .hero-section p {
-            font-size: 16px;
-            color: #475569;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* GRID DE OPERAÇÕES */
-        .operations-grid {
+        /* GRID DE CARDS OPERACIONAIS */
+        .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
         }
 
-        .op-card {
-            background-color: var(--branco);
+        .card {
+            background: var(--branco);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
             border: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        .card-img {
+            height: 8px;
+            background: var(--azul-agrob);
         }
 
-        .op-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border-color: var(--azul-agrob);
-        }
+        .card-content { padding: 30px; }
+        .card-content h3 { font-size: 16px; color: var(--azul-agrob); text-transform: uppercase; margin-bottom: 15px; font-weight: 800; }
+        .card-content p { font-size: 13px; color: #475569; margin-bottom: 25px; min-height: 60px; }
 
-        .op-icon {
-            background-color: #f1f5f9;
-            padding: 40px;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .op-icon svg {
-            width: 60px;
-            height: 60px;
-            fill: var(--azul-agrob);
-        }
-
-        .op-details {
-            padding: 30px;
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .op-details h3 {
-            margin: 0 0 12px;
-            font-size: 18px;
-            color: var(--azul-agrob);
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-
-        .op-details p {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .badge-status {
-            display: inline-block;
-            background-color: var(--status-andamento);
+        .btn-action {
+            display: block;
+            background: var(--azul-agrob);
             color: white;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .op-footer {
-            background-color: var(--azul-agrob);
-            color: white;
-            padding: 18px;
             text-align: center;
-            font-weight: 800;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
             font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 1px;
+            transition: 0.3s;
         }
+        .btn-action:hover { background: var(--ouro); color: var(--azul-agrob); }
 
-        /* RODAPÉ */
         footer {
-            background-color: var(--azul-agrob);
-            color: #94a3b8;
+            margin-top: 60px;
             padding: 30px;
             text-align: center;
             font-size: 11px;
-            border-top: 4px solid #f39c12;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
         }
-
-        footer strong { color: white; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-container">
-            <img src="LogomarcaAgroSB.png" alt="Logomarca AgroSB">
+        <div class="logo-area">
+            <img src="LogomarcaAgroSB.png" alt="AgroSB">
+            <h1>Gestão Lagoa do Triunfo</h1>
         </div>
-        <div class="header-title">
-            <h1>Painel de Monitoramento</h1>
-            <p>Fazenda Lagoa do Triunfo | Gestão Ambiental</p>
-        </div>
+        <nav>
+            <a href="index.html" class="nav-link active">Dashboard</a>
+            <a href="construcao-cercas.html" class="nav-link">Cercamento</a>
+            <a href="limpeza-pasto.html" class="nav-link">Limpeza</a>
+            <a href="aplicacao-herbicida.html" class="nav-link">Herbicida</a>
+        </nav>
     </header>
 
+    <section class="kpi-section">
+        <div class="kpi-box">
+            <span>Cercas Totais</span>
+            <h2>11,0 km</h2>
+            <p>Concluído 2026</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: #3b82f6;">
+            <span>Limpeza Correntão</span>
+            <h2>14.740 ha</h2>
+            <p style="color: #3b82f6;">Área Monitorada</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: #22c55e;">
+            <span>Produtividade</span>
+            <h2>92.4%</h2>
+            <p>Meta Global</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: var(--ouro);">
+            <span>PRODES/Reserva</span>
+            <h2>100%</h2>
+            <p style="color: var(--ouro);">Conformidade</p>
+        </div>
+    </section>
+
     <main>
-        <section class="hero-section">
-            <h2>Gestão de Operações em Campo</h2>
-            <p>Acompanhamento técnico para a diretoria: Status físico de cercas, limpeza de áreas e aplicação de insumos.</p>
-        </section>
+        <div class="welcome-msg">
+            <h2>Monitoramento em Tempo Real</h2>
+            <p>Selecione uma operação abaixo para acessar mapas dinâmicos e relatórios técnicos.</p>
+        </div>
 
-        <div class="operations-grid">
+        <div class="dashboard-grid">
             
-            <a href="limpeza-pasto.html" class="op-card">
-                <div class="op-icon">
-                    <svg viewBox="0 0 24 24"><path d="M22 14.5l-2.8-2.8c-.3-.3-.7-.5-1.1-.5h-6.8l-1.6-3.2c-.3-.7-1-1.1-1.8-1.1H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-4h1.5l1.3 1.3c.4.4 1 .4 1.4 0l.6-.6c.4-.4.4-1.1 0-1.5z"/></svg>
-                </div>
-                <div class="op-details">
-                    <h3>Limpeza de Pastagens</h3>
-                    <p>Operações com correntão em áreas de Reserva Ambiental e PRODES.</p>
-                    <div class="badge-status">Em Andamento</div>
-                </div>
-                <div class="op-footer">ABRIR MAPA DE ÁREAS</div>
-            </a>
-
-            <a href="construcao-cercas.html" class="op-card">
-                <div class="op-icon">
-                    <svg viewBox="0 0 24 24"><path d="M21 14v-4c0-1.1-.9-2-2-2h-3v-3c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v3H3c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h3v3c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-3h3c1.1 0 2-.9 2-2z"/></svg>
-                </div>
-                <div class="op-details">
+            <div class="card">
+                <div class="card-img"></div>
+                <div class="card-content">
                     <h3>Construção de Cercas</h3>
-                    <p>Relatórios de KM concluídos e cronograma de cercamento de divisas.</p>
-                    <div class="badge-status">Em Andamento</div>
+                    <p>Status físico da quilometragem de cercas em áreas de Reserva e divisas estratégicas.</p>
+                    <a href="construcao-cercas.html" class="btn-action">Ver Gráficos e Tabelas</a>
                 </div>
-                <div class="op-footer">ABRIR RELATÓRIO DE KM</div>
-            </a>
+            </div>
 
-            <a href="aplicacao-herbicida.html" class="op-card">
-                <div class="op-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"/></svg>
+            <div class="card">
+                <div class="card-img" style="background: #3b82f6;"></div>
+                <div class="card-content">
+                    <h3>Operação Correntão</h3>
+                    <p>Acompanhamento detalhado da supressão vegetal autorizada por retiro e produtividade das frentes.</p>
+                    <a href="dashboard-correntao.html" class="btn-action">Abrir Mapa e Relatórios</a>
                 </div>
-                <div class="op-details">
+            </div>
+
+            <div class="card">
+                <div class="card-img" style="background: #22c55e;"></div>
+                <div class="card-content">
                     <h3>Aplicação de Herbicida</h3>
-                    <p>Controle químico de invasoras e regeneração assistida em campo.</p>
-                    <div class="badge-status">Em Andamento</div>
+                    <p>Controle de áreas tratadas para regeneração e manutenção de pastagens.</p>
+                    <a href="aplicacao-herbicida.html" class="btn-action">Abrir Mapa de Aplicação</a>
                 </div>
-                <div class="op-footer">ABRIR MAPA DE APLICAÇÃO</div>
-            </a>
+            </div>
 
         </div>
     </main>
 
     <footer>
-        <p><strong>AgroSB</strong> - Tecnologia e Monitoramento no Agronegócio</p>
-        <p>Acesso Restrito: Uso Interno e Auditoria Fazenda Lagoa do Triunfo | 2026</p>
+        <p><strong>AgroSB - LAGOA DO TRIUNFO</strong> |Topografia e Agricultura de Precisão</p>
+        <p>Dados atualizados em: 25 de Março de 2026</p>
     </footer>
 
 </body>
 </html>
+
+<div class="card">
+    <div class="card-img"></div>
+    <div class="card-content">
+        <h3>Construção de Cercas</h3>
+        <p>Status físico da quilometragem de cercas em áreas de Reserva e divisas estratégicas.</p>
+        <a href="construcao-cercas.html" class="btn-action">Ver Gráficos e Tabelas</a>
+    </div>
+</div>
