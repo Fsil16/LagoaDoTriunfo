@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --concluido: #27ae60;
+        --planejado-restante: #FF3D00;
+        --total-area: #e2e8f0;
+        --fundo: #ffffff;
+    }
+
+    body { font-family: 'Inter', sans-serif; background-color: transparent; margin: 0; padding: 10px; color: #1e293b; }
+    .container { background: var(--fundo); padding: 20px; border-radius: 12px; }
+    .header { border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 10px; }
+    .title { font-weight: 800; font-size: 16px; text-transform: uppercase; margin: 0; color: #00264b; }
+    .date-info { font-size: 11px; color: #64748b; margin-top: 8px; display: flex; gap: 20px; font-weight: 500; }
+
+    @keyframes slideIn { from { width: 0; } to { width: var(--target-width); } }
+
+    .overall-progress-section { margin-bottom: 30px; }
+    .overall-label { font-size: 11px; font-weight: 700; margin-bottom: 10px; display: block; color: #475569; }
+    .overall-bar { height: 28px; background: var(--total-area); border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0; position: relative; }
+    .bar-planejada-geral { position: absolute; background: var(--planejado-restante); height: 100%; width: var(--plan-width); z-index: 1; }
+    .done-main { position: absolute; background: linear-gradient(90deg, #27ae60, #2ecc71); height: 100%; color: white; font-size: 10px; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: 800; animation: slideIn 1.5s ease-out forwards; }
+
+    .legend { display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; font-weight: 600; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .box { width: 14px; height: 14px; border-radius: 3px; }
+
+    /* ESTA É A MUDANÇA CHAVE: O wrapper alinha à esquerda e não força o crescimento */
+    .retiro-block { display: flex; align-items: center; margin-bottom: 12px; gap: 15px; padding: 5px 8px; }
+    .label-row { width: 200px; flex-shrink: 0; font-size: 11px; }
+    .name { font-weight: 700; color: #00264b; display: block; }
+    .area { font-size: 10px; color: #94a3b8; }
+    
+    .bar-wrapper { flex-grow: 1; display: flex; justify-content: flex-start; } /* Mantém as barras alinhadas à esquerda */
+    
+    .bar-container { height: 18px; background: var(--total-area); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #e2e8f0; }
+    
+    .fill-planejado { position: absolute; background: var(--planejado-restante); height: 100%; z-index: 1; }
+    .bar-fill { position: absolute; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; z-index: 2; animation: slideIn 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards; }
+
+    .summary-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11px; }
+    .summary-table th { text-align: left; padding: 12px; background: #00264b; color: #fff; }
+    .summary-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+    .row-total { background: #f8fafc; font-weight: 800; color: #00264b; }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Monitoramento Correntão</h1>
+            <div class="date-info">
+                <span>📅 INÍCIO: 17/01/2026</span>
+                <span>🔄 ATUALIZAÇÃO: 27/03/2026</span>
+                <span>🎯 META PLANEJADA: 2.696,76 ha</span>
+            </div>
+        </div>
+
+        <div class="overall-progress-section">
+            <span class="overall-label">Status Consolidado (Realizado vs Meta Planejada)</span>
+            <div class="overall-bar">
+                <div class="bar-planejada-geral" style="--plan-width: 100%;"></div>
+                <div class="done-main" style="--target-width: 48.21%;">1.300,00 ha Concluídos de 2.696,76 ha</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="box" style="background:var(--total-area)"></div> Área Total Retiro</div>
+            <div class="legend-item"><div class="box" style="background:var(--planejado-restante)"></div> Planejado (Meta)</div>
+            <div class="legend-item"><div class="box" style="background:var(--concluido)"></div> Concluído</div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">SERTÃOZINHO (ST)</span><span class="area">Total: 83 / 3.108 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 100%;">
+                <div class="fill-planejado" style="width: 2.68%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 2.68%;">100%</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">TRIUNFO</span><span class="area">Total: 34 / 2.278 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 73.2%;">
+                <div class="fill-planejado" style="width: 1.52%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 1.52%;">100%</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">OURO NEGRO</span><span class="area">Total: 231 / 2.272 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 73.1%;">
+                <div class="fill-planejado" style="width: 10.20%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 10.20%;">100%</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">VISTA ALEGRE</span><span class="area">Total: 287 / 2.265 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 72.8%;">
+                <div class="fill-planejado" style="width: 12.67%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 12.67%;">100%</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">POÇO PRETO</span><span class="area">Total: 68 / 2.255 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 72.5%;">
+                <div class="fill-planejado" style="width: 11.17%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 3.05%;">27% Meta</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">TUCUNARÉ (TU)</span><span class="area">Total: 572 / 2.235 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 71.9%;">
+                <div class="fill-planejado" style="width: 55.11%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 25.63%;">46% Meta</div>
+            </div></div>
+        </div>
+
+        <div class="retiro-block">
+            <div class="label-row"><span class="name">PPC</span><span class="area">Total: 0 / 608 ha</span></div>
+            <div class="bar-wrapper"><div class="bar-container" style="width: 19.5%;">
+                <div class="fill-planejado" style="width: 94.74%;"></div>
+                <div class="bar-fill" style="background:var(--concluido); --target-width: 0%;">0%</div>
+            </div></div>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Resumo Financeiro e Operacional</th>
+                    <th style="text-align:right">Área (ha)</th>
+                    <th style="text-align:right">Progresso (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Meta Planejada (Esta Etapa)</td><td style="text-align:right">2.696,76</td><td style="text-align:right">100,00%</td></tr>
+                <tr><td>Total Concluído Real</td><td style="text-align:right">1.300,00</td><td style="text-align:right">48,21%</td></tr>
+                <tr class="row-total">
+                    <td>TOTAL DA PROPRIEDADE (FAZENDA)</td>
+                    <td style="text-align:right">15.021,00</td>
+                    <td style="text-align:right">8,65%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
