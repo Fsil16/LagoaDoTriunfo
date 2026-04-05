@@ -137,47 +137,36 @@
         }
     }
 
-   async function carregarDashboard() {
+  async function carregarDashboard() {
         const statusGeral = document.getElementById('barra-geral');
         try {
-            // USAR APENAS A URL E O REDIRECT. Sem headers personalizados.
+            // Requisição Minimalista: O Google exige que seja o mais simples possível
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                mode: 'cors', 
-                redirect: 'follow' // ESSENCIAL: O Google redireciona para outro servidor
+                redirect: 'follow' // OBRIGATÓRIO para o Google /exec
             });
 
-            if (!resposta.ok) throw new Error('Resposta do Google não está OK');
+            if (!resposta.ok) throw new Error('Erro na rede');
 
             const dados = await resposta.json();
-            console.log("Dados recebidos com sucesso!", dados);
+            
+            // Se chegou aqui, os dados entraram! 
+            // Vamos renderizar (ajuste os IDs conforme seu HTML)
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR');
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR');
+            statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} m`;
 
-            // Preenchimento do Topo
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
-
-            // Renderização dos Retiros
             const container = document.getElementById('lista-retiros');
             container.innerHTML = dados.retiros.map(r => `
                 <div class="retiro-block">
-                    <div class="label-row">
-                        <span class="name">${r.nome}</span>
-                        <span class="area">${r.executado} / ${r.total} m</span>
-                    </div>
-                    <div class="bar-wrapper">
-                        <div class="bar-container">
-                            <div class="segment" style="width: ${r.perc}%">
-                                ${r.perc}%
-                            </div>
-                        </div>
-                    </div>
+                    <span>${r.nome}: ${r.perc}%</span>
+                    <div class="bar-container"><div class="segment" style="width:${r.perc}%"></div></div>
                 </div>
             `).join('');
 
         } catch (erro) {
-            console.error("Erro detalhado no Fetch:", erro);
-            statusGeral.innerText = "Erro de Sincronização: Verifique a permissão do Google Script.";
+            console.error("Erro no Fetch:", erro);
+            statusGeral.innerText = "Erro de Sincronização. Verifique a URL /exec.";
         }
     }
 
