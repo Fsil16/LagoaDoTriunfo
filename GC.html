@@ -136,37 +136,33 @@
         }
 
         async function carregarDashboard() {
+            const barraGeral = document.getElementById('barra-geral');
             try {
-                const urlComCacheBust = urlAPI + "?t=" + new Date().getTime();
-                
-                // CORREÇÃO 1: Adicionado modo CORS e Redirecionamento (essencial para GitHub -> Google)
-                const resposta = await fetch(urlComCacheBust, {
+                // Removemos o cache bust do parâmetro para testar a conexão pura
+                const resposta = await fetch(urlAPI, {
                     method: 'GET',
-                    mode: 'cors',
-                    redirect: 'follow' 
+                    // Importante: NÃO use 'mode: cors' aqui, deixe o padrão do navegador
+                    redirect: 'follow'
                 });
 
+                if (!resposta.ok) throw new Error('Erro na rede');
+                
                 const dados = await resposta.json();
+                console.log("Dados carregados com sucesso!", dados);
 
-                // CORREÇÃO 2: Verificação de erro retornada pelo Apps Script
-                if (dados.erro) {
-                    document.getElementById('barra-geral').innerText = "Erro na Planilha: " + dados.erro;
-                    return;
-                }
-
+                // Preenchimento do HTML
                 document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + formatarData(dados.info.inicio);
                 document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + formatarData(dados.info.atualizacao);
-                document.getElementById('barra-geral').innerText = `Produção: ${dados.info.operacao || 0} Metros`;
+                barraGeral.innerText = `Produção: ${dados.info.operacao || 0} Metros`;
 
                 const containerRetiros = document.getElementById('lista-retiros');
-                
+                containerRetiros.innerHTML = ""; 
+
                 if (dados.retiros && dados.retiros.length > 0) {
-                    let htmlAcumulado = ""; 
-                    
+                    let htmlFinal = "";
                     dados.retiros.forEach(r => {
-                        // CORREÇÃO 3: Garantir que perc seja tratado como número para o estilo CSS
                         const largura = parseFloat(r.perc) || 0;
-                        htmlAcumulado += `
+                        htmlFinal += `
                             <div class="retiro-block">
                                 <div class="label-row">
                                     <span class="name">${r.nome}</span>
@@ -181,15 +177,13 @@
                                 </div>
                             </div>`;
                     });
-                    
-                    containerRetiros.innerHTML = htmlAcumulado;
-                } else {
-                    containerRetiros.innerHTML = "<p style='font-size:11px; color:#64748b; padding:10px;'>Nenhum dado de retiro encontrado.</p>";
+                    containerRetiros.innerHTML = htmlFinal;
                 }
-
             } catch (erro) {
-                console.error("Erro ao carregar dashboard:", erro);
-                document.getElementById('barra-geral').innerText = "Erro de conexão: Verifique a publicação do Script";
+                console.error("Erro detalhado:", erro);
+                barraGeral.innerText = "Tentando conectar com a planilha...";
+                // Tenta novamente em 10 segundos se falhar
+                setTimeout(carregarDashboard, 10000);
             }
         }
 
