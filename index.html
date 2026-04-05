@@ -56,30 +56,61 @@
 </div>
 
 <script>
-   
-   const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec"; // Use a URL que você copiou no passo 1
+    // URL que você forneceu - VALIDADA
+    const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec";
 
-async function carregarDashboard() {
-    try {
-        const resposta = await fetch(urlAPI, {
-            method: 'GET',
-            // Omitimos o 'mode: cors' aqui porque o Google Apps Script 
-            // no modo 'Qualquer Pessoa' resolve isso pelo redirecionamento
-            redirect: 'follow' 
-        });
+    async function carregarDashboard() {
+        const barraGeral = document.getElementById('barra-geral');
+        const container = document.getElementById('lista-retiros');
 
-        if (!resposta.ok) throw new Error('Falha na resposta');
-        const dados = await resposta.json();
-        
-        // ... restante do código de renderização ...
-        console.log("Sucesso na Lagoa do Triunfo!", dados);
+        try {
+            const resposta = await fetch(urlAPI, {
+                method: 'GET',
+                redirect: 'follow' 
+            });
 
-    } catch (erro) {
-        console.error("Erro técnico:", erro);
+            if (!resposta.ok) throw new Error('Falha na resposta');
+            const dados = await resposta.json();
+            
+            console.log("Sucesso na Lagoa do Triunfo!", dados);
+
+            // 1. Preencher Datas e Barra Principal
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
+            
+            barraGeral.classList.remove('loading');
+            barraGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
+
+            // 2. Criar as barras de progresso para cada Retiro
+            container.innerHTML = dados.retiros.map(r => {
+                // Se o perc vier como decimal (0.45), multiplicamos por 100. Se já vier como 45, usamos direto.
+                let p = parseFloat(r.perc);
+                if (p <= 1) p = p * 100; 
+                p = p.toFixed(1);
+
+                return `
+                    <div class="retiro-block">
+                        <div class="label-row">
+                            <span class="name">${r.nome}</span>
+                            <span class="area">${r.executado} / ${r.total} m</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="segment" style="width: ${p}%">
+                                ${p}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (erro) {
+            console.error("Erro técnico:", erro);
+            barraGeral.classList.remove('loading');
+            barraGeral.style.background = "#d32f2f";
+            barraGeral.innerText = "Erro: Verifique se o Google Script está como 'Qualquer Pessoa'.";
+        }
     }
-}
 
-    // Executa assim que a página carregar
     window.onload = carregarDashboard;
 </script>
 
