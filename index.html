@@ -64,14 +64,21 @@
         const container = document.getElementById('lista-retiros');
 
         try {
-            // O segredo técnico: fetch simples com redirect follow
-            // O Google lida com o CORS se a requisição não tiver headers customizados
+            // Versão simplificada ao máximo para evitar bloqueio CORS
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                redirect: 'follow'
+                // Removidos: mode, headers e cache. 
+                // Mantido apenas o redirect que é vital para o Google.
+                redirect: 'follow' 
             });
 
-            if (!resposta.ok) throw new Error('Falha na comunicação com o Google');
+            if (!resposta.ok) throw new Error('Falha na rede');
+            
+            // ... resto do seu código ...
+
+
+
+       
 
             const dados = await resposta.json();
             console.log("Dados recebidos da Lagoa do Triunfo:", dados);
