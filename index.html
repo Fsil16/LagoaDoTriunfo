@@ -1,194 +1,50 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --reforma: #FFD600;
-            --cerca-nova: #27ae60;
-            --desmanche: #FF3D00;
-            --aceiro: #0f9ed5;
-            --fundo: #ffffff;
-        }
+async function carregarDashboard() {
+    const barraGeral = document.getElementById('barra-geral');
+    try {
+        // Usamos apenas a URL pura. O Google Apps Script não lida bem com 
+        // cabeçalhos complexos vindos de domínios externos como o GitHub.
+        const resposta = await fetch(urlAPI, {
+            method: 'GET',
+            mode: 'no-cors', // TENTATIVA 1: Se o seu script apenas envia dados, o no-cors pode liberar a conexão
+            redirect: 'follow'
+        });
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: transparent; 
-            margin: 0; padding: 10px; color: #1e293b;
-            overflow-x: hidden;
-        }
-
-        .container { 
-            background: var(--fundo); 
-            padding: 20px; 
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
+        // NOTA: No modo 'no-cors', o JS não consegue ler o JSON por segurança.
+        // Se o erro persistir, volte para o modo padrão abaixo, que é o mais correto:
         
-        .header { border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 10px; }
-        .title { font-weight: 800; font-size: 16px; text-transform: uppercase; margin: 0; color: #00264b; }
+        const respostaReal = await fetch(urlAPI + "?t=" + new Date().getTime(), {
+            method: 'GET',
+            redirect: 'follow'
+        });
 
-        .date-info {
-            font-size: 11px; color: #64748b; margin-top: 8px;
-            display: flex; gap: 20px; font-weight: 500;
-        }
-
-        @keyframes slideIn {
-            from { width: 0; opacity: 0; }
-            to { width: var(--seg-width); opacity: 1; }
-        }
-
-        .overall-progress-section { margin-bottom: 30px; }
-        .overall-label { font-size: 11px; font-weight: 700; margin-bottom: 10px; display: block; color: #475569; }
+        const dados = await respostaReal.json();
         
-        .overall-bar { 
-            height: 28px; background: #f1f5f9; border-radius: 6px; 
-            overflow: hidden; border: 1px solid #e2e8f0; position: relative;
-        }
-        
-        .done-main { 
-            background: linear-gradient(90deg, #27ae60, #2ecc71); 
-            height: 100%; color: white; font-size: 10px; 
-            display: flex; align-items: center; justify-content: center; font-weight: 800;
-            width: 100%;
-        }
+        // Atualização dos campos
+        document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + formatarData(dados.info.inicio);
+        document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + formatarData(dados.info.atualizacao);
+        barraGeral.innerText = `Produção: ${dados.info.operacao || 0} Metros`;
 
-        .legend { display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; font-weight: 600; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .box { width: 14px; height: 14px; border-radius: 3px; }
-
-        .retiro-block { 
-            display: flex; align-items: center; margin-bottom: 12px; gap: 15px; 
-            padding: 8px; border-radius: 6px;
-        }
-
-        .label-row { width: 200px; flex-shrink: 0; font-size: 11px; }
-        .name { font-weight: 700; color: #00264b; display: block; }
-        .area { font-size: 10px; color: #94a3b8; }
-        
-        .bar-wrapper { flex-grow: 1; }
-
-        .bar-container { 
-            height: 18px; 
-            background: #f1f5f9; 
-            border-radius: 4px; 
-            overflow: hidden; 
-            border: 1px solid #e2e8f0; 
-            display: flex; 
-            width: 100%; 
-        }
-        
-        .segment {
-            height: 100%;
-            animation: slideIn 1.2s ease-out forwards;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: white;
-            font-weight: 800;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Monitoramento de Cercas - AgroSB</h1>
-            <div class="date-info">
-                <span id="data-inicio">📅 INÍCIO: --/--/----</span>
-                <span id="data-atualizacao">🔄 ATUALIZAÇÃO: --/--/----</span>
-                <span id="meta-info">🎯 META: 21.000 m/mês</span>
-            </div>
-        </div>
-
-        <div class="overall-progress-section">
-            <span class="overall-label">Status Consolidado</span>
-            <div class="overall-bar">
-                <div class="done-main" id="barra-geral">Carregando dados...</div>
-            </div>
-        </div>
-
-        <div class="legend">
-            <div class="legend-item"><div class="box" style="background:var(--reforma)"></div> Reforma</div>
-            <div class="legend-item"><div class="box" style="background:var(--cerca-nova)"></div> Nova</div>
-            <div class="legend-item"><div class="box" style="background:var(--desmanche)"></div> Desmanche</div>
-            <div class="legend-item"><div class="box" style="background:var(--aceiro)"></div> Aceiro</div>
-        </div>
-
-        <div id="lista-retiros"></div>
-    </div>
-
-    <script>
-        const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec";
-
-        function formatarData(isoString) {
-            if (!isoString || isoString.includes("--")) return "--/--/----";
-            try {
-                // Se a data já vier formatada do Apps Script (dd/MM/yyyy), retorna ela mesma
-                if (isoString.includes('/')) return isoString;
-                const d = new Date(isoString);
-                return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            } catch (e) { return isoString; }
-        }
-
-        async function carregarDashboard() {
-            const barraGeral = document.getElementById('barra-geral');
-            try {
-                // Removemos o cache bust do parâmetro para testar a conexão pura
-                const resposta = await fetch(urlAPI, {
-                    method: 'GET',
-                    // Importante: NÃO use 'mode: cors' aqui, deixe o padrão do navegador
-                    redirect: 'follow'
-                });
-
-                if (!resposta.ok) throw new Error('Erro na rede');
-                
-                const dados = await resposta.json();
-                console.log("Dados carregados com sucesso!", dados);
-
-                // Preenchimento do HTML
-                document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + formatarData(dados.info.inicio);
-                document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + formatarData(dados.info.atualizacao);
-                barraGeral.innerText = `Produção: ${dados.info.operacao || 0} Metros`;
-
-                const containerRetiros = document.getElementById('lista-retiros');
-                containerRetiros.innerHTML = ""; 
-
-                if (dados.retiros && dados.retiros.length > 0) {
-                    let htmlFinal = "";
-                    dados.retiros.forEach(r => {
-                        const largura = parseFloat(r.perc) || 0;
-                        htmlFinal += `
-                            <div class="retiro-block">
-                                <div class="label-row">
-                                    <span class="name">${r.nome}</span>
-                                    <span class="area">${r.executado} / ${r.total} m</span>
+        const containerRetiros = document.getElementById('lista-retiros');
+        if (dados.retiros && dados.retiros.length > 0) {
+            let html = "";
+            dados.retiros.forEach(r => {
+                const p = parseFloat(r.perc) || 0;
+                html += `<div class="retiro-block">
+                            <div class="label-row">
+                                <span class="name">${r.nome}</span>
+                                <span class="area">${r.executado} / ${r.total} m</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-container">
+                                    <div class="segment" style="background:var(--cerca-nova); --seg-width: ${p}%; width: ${p}%">${p}%</div>
                                 </div>
-                                <div class="bar-wrapper">
-                                    <div class="bar-container">
-                                        <div class="segment" style="background:var(--cerca-nova); --seg-width: ${largura}%; width: ${largura}%">
-                                            ${largura}%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                    containerRetiros.innerHTML = htmlFinal;
-                }
-            } catch (erro) {
-                console.error("Erro detalhado:", erro);
-                barraGeral.innerText = "Tentando conectar com a planilha...";
-                // Tenta novamente em 10 segundos se falhar
-                setTimeout(carregarDashboard, 10000);
-            }
+                            </div>
+                         </div>`;
+            });
+            containerRetiros.innerHTML = html;
         }
-
-        carregarDashboard();
-        setInterval(carregarDashboard, 300000);
-    </script>
-</body>
-</html>
+    } catch (erro) {
+        console.error("Erro detectado:", erro);
+        barraGeral.innerText = "Erro: Verifique a conexão ou publicação do Script";
+    }
+}
