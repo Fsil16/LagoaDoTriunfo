@@ -56,69 +56,28 @@
 </div>
 
 <script>
-    // URL validada que você forneceu
-    const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec"; 
+   
+   const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec"; // Use a URL que você copiou no passo 1
 
-    async function carregarDashboard() {
-        const barraGeral = document.getElementById('barra-geral');
-        const container = document.getElementById('lista-retiros');
+async function carregarDashboard() {
+    try {
+        const resposta = await fetch(urlAPI, {
+            method: 'GET',
+            // Omitimos o 'mode: cors' aqui porque o Google Apps Script 
+            // no modo 'Qualquer Pessoa' resolve isso pelo redirecionamento
+            redirect: 'follow' 
+        });
 
-        try {
-            // Versão simplificada ao máximo para evitar bloqueio CORS
-            const resposta = await fetch(urlAPI, {
-                method: 'GET',
-                // Removidos: mode, headers e cache. 
-                // Mantido apenas o redirect que é vital para o Google.
-                redirect: 'follow' 
-            });
+        if (!resposta.ok) throw new Error('Falha na resposta');
+        const dados = await resposta.json();
+        
+        // ... restante do código de renderização ...
+        console.log("Sucesso na Lagoa do Triunfo!", dados);
 
-            if (!resposta.ok) throw new Error('Falha na rede');
-            
-            // ... resto do seu código ...
-
-
-
-       
-
-            const dados = await resposta.json();
-            console.log("Dados recebidos da Lagoa do Triunfo:", dados);
-
-            // 1. Atualização dos Metadados (Datas e Total)
-            const dInicio = new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            const dAtu = new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dInicio;
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dAtu;
-            
-            barraGeral.classList.remove('loading');
-            barraGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros Realizados`;
-
-            // 2. Construção dinâmica das barras dos Retiros
-            container.innerHTML = dados.retiros.map(r => {
-                const porcentagem = parseFloat(r.perc) || 0;
-                return `
-                    <div class="retiro-block">
-                        <div class="label-row">
-                            <span class="name">${r.nome}</span>
-                            <span class="area">${r.executado.toLocaleString('pt-BR')} / ${r.total.toLocaleString('pt-BR')} m</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="segment" style="width: ${porcentagem}%">
-                                ${porcentagem}%
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-        } catch (erro) {
-            console.error("Erro no carregamento:", erro);
-            barraGeral.classList.remove('loading');
-            barraGeral.style.background = "#d32f2f";
-            barraGeral.innerText = "Erro de Sincronização. Verifique a Permissão do Script.";
-            container.innerHTML = `<p style="text-align:center; color:#666;">Certifique-se que o Google Script está implantado para 'Qualquer Pessoa'.</p>`;
-        }
+    } catch (erro) {
+        console.error("Erro técnico:", erro);
     }
+}
 
     // Executa assim que a página carregar
     window.onload = carregarDashboard;
