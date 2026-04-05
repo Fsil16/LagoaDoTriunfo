@@ -1,174 +1,121 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de Cercas - AgroSB</title>
     <style>
         :root {
-            --reforma: #FFD600;
-            --cerca-nova: #27ae60;
-            --desmanche: #FF3D00;
-            --aceiro: #0f9ed5;
-            --fundo: #ffffff;
+            --primary: #2e7d32;
+            --bg: #f5f5f5;
+            --card: #ffffff;
         }
-
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: transparent; 
-            margin: 0; padding: 10px; color: #1e293b;
-            overflow-x: hidden;
-        }
-
-        .container { 
-            background: var(--fundo); 
-            padding: 20px; 
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 800px; background: var(--card); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; text-transform: uppercase; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 0; }
         
-        .header { border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; padding-bottom: 10px; }
-        .title { font-weight: 800; font-size: 16px; text-transform: uppercase; margin: 0; color: #00264b; }
+        .header-info { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
+        .badge { background: #e8f5e9; padding: 8px 12px; border-radius: 6px; font-size: 0.85em; color: #2e7d32; font-weight: bold; border: 1px solid #c8e6c9; }
 
-        .date-info {
-            font-size: 11px; color: #64748b; margin-top: 8px;
-            display: flex; gap: 20px; font-weight: 500;
-        }
+        .main-status { background: #4caf50; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 25px; transition: all 0.3s; }
+        .loading { background: #ffa000 !important; animation: pulse 1.5s infinite; }
 
-        @keyframes slideIn {
-            from { width: 0; opacity: 0; }
-            to { width: var(--seg-width); opacity: 1; }
-        }
+        .retiro-block { margin-bottom: 20px; }
+        .label-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; color: #444; }
+        .bar-container { background: #eee; height: 24px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd; }
+        .segment { background: linear-gradient(90deg, #4caf50, #81c784); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.85em; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); transition: width 1s ease-in-out; }
 
-        .overall-progress-section { margin-bottom: 30px; }
-        .overall-label { font-size: 11px; font-weight: 700; margin-bottom: 10px; display: block; color: #475569; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
         
-        .overall-bar { 
-            height: 28px; background: #f1f5f9; border-radius: 6px; 
-            overflow: hidden; border: 1px solid #e2e8f0; position: relative;
-        }
-        
-        .done-main { 
-            background: linear-gradient(90deg, #27ae60, #2ecc71); 
-            height: 100%; color: white; font-size: 10px; 
-            display: flex; align-items: center; justify-content: center; font-weight: 800;
-            width: 100%;
-        }
-
-        .legend { display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; font-weight: 600; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .box { width: 14px; height: 14px; border-radius: 3px; }
-
-        .retiro-block { 
-            display: flex; align-items: center; margin-bottom: 12px; gap: 15px; 
-            padding: 8px; border-radius: 6px;
-        }
-
-        .label-row { width: 200px; flex-shrink: 0; font-size: 11px; }
-        .name { font-weight: 700; color: #00264b; display: block; }
-        .area { font-size: 10px; color: #94a3b8; }
-        
-        .bar-wrapper { flex-grow: 1; }
-
-        .bar-container { 
-            height: 18px; 
-            background: #f1f5f9; 
-            border-radius: 4px; 
-            overflow: hidden; 
-            border: 1px solid #e2e8f0; 
-            display: flex; 
-            width: 100%; 
-        }
-        
-        .segment {
-            height: 100%;
-            animation: slideIn 1.2s ease-out forwards;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: white;
-            font-weight: 800;
-            overflow: hidden;
-            white-space: nowrap;
-        }
+        .footer-legend { display: flex; gap: 15px; font-size: 0.8em; margin-top: 20px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
+        .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 5px; }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Monitoramento de Cercas - AgroSB</h1>
-            <div class="date-info">
-                <span id="data-inicio">📅 INÍCIO: --/--/----</span>
-                <span id="data-atualizacao">🔄 ATUALIZAÇÃO: --/--/----</span>
-                <span id="meta-info">🎯 META: 21.000 m/mês</span>
-            </div>
-        </div>
 
-        <div class="overall-progress-section">
-            <span class="overall-label">Status Consolidado</span>
-            <div class="overall-bar">
-                <div class="done-main" id="barra-geral">Carregando dados...</div>
-            </div>
-        </div>
-
-        <div class="legend">
-            <div class="legend-item"><div class="box" style="background:var(--reforma)"></div> Reforma</div>
-            <div class="legend-item"><div class="box" style="background:var(--cerca-nova)"></div> Nova</div>
-            <div class="legend-item"><div class="box" style="background:var(--desmanche)"></div> Desmanche</div>
-            <div class="legend-item"><div class="box" style="background:var(--aceiro)"></div> Aceiro</div>
-        </div>
-
-        <div id="lista-retiros"></div>
+<div class="container">
+    <h2>Monitoramento de Cercas - AgroSB</h2>
+    
+    <div class="header-info">
+        <div class="badge" id="data-inicio">📅 INÍCIO: --/--/----</div>
+        <div class="badge" id="data-atualizacao">🔄 ATUALIZAÇÃO: --/--/----</div>
+        <div class="badge" style="background: #f3f3f3; color: #555;">🎯 META: 21.000 m/mês</div>
     </div>
 
-  const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec"; 
+    <div id="barra-geral" class="main-status loading">Sincronizando com Google Sheets...</div>
+
+    <div id="lista-retiros">
+        </div>
+
+    <div class="footer-legend">
+        <span><span class="dot" style="background:#fdd835"></span> Reforma</span>
+        <span><span class="dot" style="background:#4caf50"></span> Nova</span>
+        <span><span class="dot" style="background:#f4511e"></span> Desmanche</span>
+        <span><span class="dot" style="background:#039be5"></span> Aceiro</span>
+    </div>
+</div>
+
+<script>
+    // URL validada que você forneceu
+    const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec"; 
 
     async function carregarDashboard() {
-        const statusGeral = document.getElementById('barra-geral');
+        const barraGeral = document.getElementById('barra-geral');
+        const container = document.getElementById('lista-retiros');
+
         try {
-            // Tentativa de busca simples
+            // O segredo técnico: fetch simples com redirect follow
+            // O Google lida com o CORS se a requisição não tiver headers customizados
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                mode: 'cors', // Google exige CORS para o JSON ser lido
                 redirect: 'follow'
             });
 
-            if (!resposta.ok) throw new Error('Falha na resposta do servidor');
+            if (!resposta.ok) throw new Error('Falha na comunicação com o Google');
 
             const dados = await resposta.json();
-            console.log("Dados AgroSB carregados:", dados);
+            console.log("Dados recebidos da Lagoa do Triunfo:", dados);
 
-            // Inserção no HTML
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-            statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
+            // 1. Atualização dos Metadados (Datas e Total)
+            const dInicio = new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            const dAtu = new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dInicio;
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dAtu;
+            
+            barraGeral.classList.remove('loading');
+            barraGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros Realizados`;
 
-            // Renderizar Retiros (Alvorada, Modelo, etc)
-            const container = document.getElementById('lista-retiros');
-            container.innerHTML = dados.retiros.map(r => `
-                <div class="retiro-block">
-                    <div class="label-row">
-                        <span class="name">${r.nome}</span>
-                        <span class="area">${r.executado} / ${r.total} m</span>
-                    </div>
-                    <div class="bar-wrapper">
+            // 2. Construção dinâmica das barras dos Retiros
+            container.innerHTML = dados.retiros.map(r => {
+                const porcentagem = parseFloat(r.perc) || 0;
+                return `
+                    <div class="retiro-block">
+                        <div class="label-row">
+                            <span class="name">${r.nome}</span>
+                            <span class="area">${r.executado.toLocaleString('pt-BR')} / ${r.total.toLocaleString('pt-BR')} m</span>
+                        </div>
                         <div class="bar-container">
-                            <div class="segment" style="width: ${r.perc}%">
-                                ${r.perc}%
+                            <div class="segment" style="width: ${porcentagem}%">
+                                ${porcentagem}%
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
         } catch (erro) {
-            console.error("Erro técnico:", erro);
-            statusGeral.innerText = "Erro de conexão. Verifique o console (F12).";
+            console.error("Erro no carregamento:", erro);
+            barraGeral.classList.remove('loading');
+            barraGeral.style.background = "#d32f2f";
+            barraGeral.innerText = "Erro de Sincronização. Verifique a Permissão do Script.";
+            container.innerHTML = `<p style="text-align:center; color:#666;">Certifique-se que o Google Script está implantado para 'Qualquer Pessoa'.</p>`;
         }
     }
 
-    // Chama a função ao carregar a página
+    // Executa assim que a página carregar
     window.onload = carregarDashboard;
+</script>
+
 </body>
 </html>
