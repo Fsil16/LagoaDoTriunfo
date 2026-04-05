@@ -140,53 +140,44 @@
    async function carregarDashboard() {
         const statusGeral = document.getElementById('barra-geral');
         try {
-            // REMOVEMOS o Cache Bust (?t=...) para testar a conexão mais simples possível
+            // USAR APENAS A URL E O REDIRECT. Sem headers personalizados.
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                // IMPORTANTE: Não use 'mode: cors' nem Headers personalizados aqui. 
-                // O Google Apps Script precisa de uma requisição "limpa" para autorizar o GitHub.
-                redirect: 'follow' 
+                mode: 'cors', 
+                redirect: 'follow' // ESSENCIAL: O Google redireciona para outro servidor
             });
 
-            if (!resposta.ok) throw new Error('Falha na rede');
+            if (!resposta.ok) throw new Error('Resposta do Google não está OK');
 
             const dados = await resposta.json();
-            console.log("Dados recebidos:", dados);
+            console.log("Dados recebidos com sucesso!", dados);
 
-            // 1. Atualiza Cabeçalho
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + formatarDataBR(dados.info.inicio);
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + formatarDataBR(dados.info.atualizacao);
+            // Preenchimento do Topo
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
             statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
 
-            // 2. Renderiza os Retiros (ALVORADA, MODELO...)
+            // Renderização dos Retiros
             const container = document.getElementById('lista-retiros');
-            container.innerHTML = ""; 
-
-            if (dados.retiros && dados.retiros.length > 0) {
-                let htmlFinal = "";
-                dados.retiros.forEach(r => {
-                    const p = parseFloat(r.perc) || 0;
-                    htmlFinal += `
-                        <div class="retiro-block">
-                            <div class="label-row">
-                                <span class="name">${r.nome}</span>
-                                <span class="area">${r.executado} / ${r.total} m</span>
+            container.innerHTML = dados.retiros.map(r => `
+                <div class="retiro-block">
+                    <div class="label-row">
+                        <span class="name">${r.nome}</span>
+                        <span class="area">${r.executado} / ${r.total} m</span>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="bar-container">
+                            <div class="segment" style="width: ${r.perc}%">
+                                ${r.perc}%
                             </div>
-                            <div class="bar-wrapper">
-                                <div class="bar-container">
-                                    <div class="segment" style="background:var(--cerca-nova); --seg-width: ${p}%; width: ${p}%">
-                                        ${p}%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-                container.innerHTML = htmlFinal;
-            }
+                        </div>
+                    </div>
+                </div>
+            `).join('');
 
         } catch (erro) {
-            console.error("Erro técnico:", erro);
-            statusGeral.innerText = "Erro de Sincronização: Tente abrir em Aba Anônima";
+            console.error("Erro detalhado no Fetch:", erro);
+            statusGeral.innerText = "Erro de Sincronização: Verifique a permissão do Google Script.";
         }
     }
 
