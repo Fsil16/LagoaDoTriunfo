@@ -122,59 +122,53 @@
         <div id="lista-retiros"></div>
     </div>
 
-   <script>
-    // URL da sua API (mantenha exatamente como está)
-    const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec";
+  const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec"; 
 
-    // Função para formatar a data ISO (2026-02-17...) para padrão BR (17/02/2026)
-    function formatarDataBR(dataIso) {
-        if (!dataIso) return "--/--/----";
-        try {
-            const data = new Date(dataIso);
-            return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-        } catch (e) {
-            return dataIso;
-        }
-    }
-
-  async function carregarDashboard() {
+    async function carregarDashboard() {
         const statusGeral = document.getElementById('barra-geral');
         try {
-            // Requisição Minimalista: O Google exige que seja o mais simples possível
+            // Tentativa de busca simples
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                redirect: 'follow' // OBRIGATÓRIO para o Google /exec
+                mode: 'cors', // Google exige CORS para o JSON ser lido
+                redirect: 'follow'
             });
 
-            if (!resposta.ok) throw new Error('Erro na rede');
+            if (!resposta.ok) throw new Error('Falha na resposta do servidor');
 
             const dados = await resposta.json();
-            
-            // Se chegou aqui, os dados entraram! 
-            // Vamos renderizar (ajuste os IDs conforme seu HTML)
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR');
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR');
-            statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} m`;
+            console.log("Dados AgroSB carregados:", dados);
 
+            // Inserção no HTML
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + new Date(dados.info.inicio).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + new Date(dados.info.atualizacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+            statusGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
+
+            // Renderizar Retiros (Alvorada, Modelo, etc)
             const container = document.getElementById('lista-retiros');
             container.innerHTML = dados.retiros.map(r => `
                 <div class="retiro-block">
-                    <span>${r.nome}: ${r.perc}%</span>
-                    <div class="bar-container"><div class="segment" style="width:${r.perc}%"></div></div>
+                    <div class="label-row">
+                        <span class="name">${r.nome}</span>
+                        <span class="area">${r.executado} / ${r.total} m</span>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="bar-container">
+                            <div class="segment" style="width: ${r.perc}%">
+                                ${r.perc}%
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `).join('');
 
         } catch (erro) {
-            console.error("Erro no Fetch:", erro);
-            statusGeral.innerText = "Erro de Sincronização. Verifique a URL /exec.";
+            console.error("Erro técnico:", erro);
+            statusGeral.innerText = "Erro de conexão. Verifique o console (F12).";
         }
     }
 
-    // Inicia a carga
-    carregarDashboard();
-    
-    // Atualiza a cada 5 minutos para monitorar a Lagoa do Triunfo em tempo real
-    setInterval(carregarDashboard, 300000);
-</script>
+    // Chama a função ao carregar a página
+    window.onload = carregarDashboard;
 </body>
 </html>
