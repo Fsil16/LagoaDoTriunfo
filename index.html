@@ -56,47 +56,55 @@
 </div>
 
 <script>
-    // URL que você forneceu - VALIDADA
-    const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec";
+    // Adicionamos um "carimbo de tempo" (timestamp) para o Google não mandar dado velho
+    const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec"; 
 
     async function carregarDashboard() {
         const barraGeral = document.getElementById('barra-geral');
         const container = document.getElementById('lista-retiros');
 
         try {
+            // "cache: no-store" força o navegador a buscar na planilha, ignorando erros de cache do Chrome
             const resposta = await fetch(urlAPI, {
                 method: 'GET',
-                redirect: 'follow' 
+                redirect: 'follow',
+                cache: 'no-store' 
             });
 
-            if (!resposta.ok) throw new Error('Falha na resposta');
+            if (!resposta.ok) throw new Error('Falha na comunicação');
             const dados = await resposta.json();
             
-            console.log("Sucesso na Lagoa do Triunfo!", dados);
+            // Validação de segurança: se a planilha estiver vazia, avisa o usuário
+            if (dados.erro) {
+                barraGeral.style.background = "#ffa000";
+                barraGeral.innerText = "Atenção: " + dados.erro;
+                return;
+            }
 
-            // 1. Preencher Datas e Barra Principal
+            // Renderização das Datas
             document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
             document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
             
+            // Barra Principal
             barraGeral.classList.remove('loading');
-            barraGeral.innerText = `Produção Total: ${dados.info.operacao.toLocaleString('pt-BR')} Metros`;
+            barraGeral.style.background = "#4caf50";
+            barraGeral.innerText = `Produção Total: ${Number(dados.info.operacao).toLocaleString('pt-BR')} m`;
 
-            // 2. Criar as barras de progresso para cada Retiro
+            // Renderização dos Retiros
             container.innerHTML = dados.retiros.map(r => {
-                // Se o perc vier como decimal (0.45), multiplicamos por 100. Se já vier como 45, usamos direto.
                 let p = parseFloat(r.perc);
-                if (p <= 1) p = p * 100; 
-                p = p.toFixed(1);
+                // Se na planilha estiver 0.5, vira 50%. Se estiver 50, continua 50.
+                let porcentagem = p <= 1 ? (p * 100).toFixed(1) : p.toFixed(1);
 
                 return `
                     <div class="retiro-block">
                         <div class="label-row">
                             <span class="name">${r.nome}</span>
-                            <span class="area">${r.executado} / ${r.total} m</span>
+                            <span class="area">${Number(r.executado).toLocaleString('pt-BR')} / ${Number(r.total).toLocaleString('pt-BR')} m</span>
                         </div>
                         <div class="bar-container">
-                            <div class="segment" style="width: ${p}%">
-                                ${p}%
+                            <div class="segment" style="width: ${porcentagem}%">
+                                ${porcentagem}%
                             </div>
                         </div>
                     </div>
@@ -104,10 +112,10 @@
             }).join('');
 
         } catch (erro) {
-            console.error("Erro técnico:", erro);
+            console.error("Erro:", erro);
             barraGeral.classList.remove('loading');
             barraGeral.style.background = "#d32f2f";
-            barraGeral.innerText = "Erro: Verifique se o Google Script está como 'Qualquer Pessoa'.";
+            barraGeral.innerText = "Erro de Sincronização. Tente Ctrl+F5 ou use o Edge.";
         }
     }
 
