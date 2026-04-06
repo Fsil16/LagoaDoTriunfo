@@ -3,150 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento de Correntão | AgroSB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-agrob: #00264b;
-            --ouro: #f39c12;
-            --fundo: #f0f2f5;
-            --branco: #ffffff;
+            --concluido: #27ae60;
+            --planejado: #FF3D00;
+            --total-area: #e2e8f0;
+            --fundo: #ffffff;
+            --primaria: #00264b;
+            --texto-secundario: #64748b;
         }
 
-        /* Trava o scroll da página principal para não haver barra dupla */
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--fundo);
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 15px; color: #1e293b; }
+        .container { background: var(--fundo); padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-width: 1100px; margin: auto; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        
+        /* Cabeçalho Superior */
+        .header { border-bottom: 3px solid var(--primaria); margin-bottom: 20px; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .title { font-weight: 800; font-size: 18px; text-transform: uppercase; margin: 0; color: var(--primaria); letter-spacing: 1px; }
+        .date-info { font-size: 11px; color: var(--texto-secundario); display: flex; gap: 20px; font-weight: 600; }
 
-        * { box-sizing: border-box; }
+        /* Barra Consolidada */
+        .overall-section { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .overall-label { font-size: 12px; font-weight: 800; margin-bottom: 10px; display: block; color: var(--primaria); text-transform: uppercase; }
+        .overall-bar { height: 30px; background: var(--total-area); border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; }
+        .done-main { position: absolute; background: var(--concluido); height: 100%; color: white; font-size: 11px; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: width 1s ease; }
 
-        header {
-            background-color: var(--azul-agrob);
-            color: white;
-            padding: 10px 3%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px; /* Altura fixa para o cálculo */
-        }
+        /* Cabeçalho das Colunas no Corpo */
+        .column-header { display: flex; padding: 10px 15px; background: var(--primaria); border-radius: 6px 6px 0 0; color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .col-name { width: 220px; }
+        .col-progress { flex-grow: 1; text-align: center; }
 
-        .btn-voltar {
-            color: white; text-decoration: none; font-size: 11px; font-weight: 700;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.3);
-            padding: 6px 12px; border-radius: 4px;
-        }
+        /* Blocos de Retiros */
+        .retiro-list { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; background: white; padding: 10px 0; }
+        .retiro-block { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; gap: 15px; }
+        .retiro-block:last-child { border-bottom: none; }
+        
+        .label-side { width: 220px; flex-shrink: 0; }
+        .name { font-weight: 800; color: var(--primaria); font-size: 12px; display: block; }
+        .details { font-size: 10px; color: var(--texto-secundario); font-weight: 500; margin-top: 2px; }
 
-        /* GRID DE CARDS: Exatamente 90px de altura como no Código 1 */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            padding: 15px 3% 5px 3%;
-            height: 90px;
-        }
-        .kpi-card {
-            background: white; padding: 10px 15px; border-radius: 8px;
-            border-bottom: 3px solid var(--ouro); box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .kpi-card span { font-size: 9px; font-weight: 700; color: #64748b; text-transform: uppercase; }
-        .kpi-card h2 { font-size: 18px; color: var(--azul-agrob); margin: 0; }
+        .bar-wrapper { flex-grow: 1; }
+        .bar-container { height: 22px; background: var(--total-area); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #e2e8f0; width: 100%; }
+        .fill-planejado { position: absolute; background: var(--planejado); height: 100%; z-index: 1; transition: width 1s ease; opacity: 0.85; }
+        .bar-fill { position: absolute; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: white; z-index: 2; transition: width 1s ease; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
 
-        /* CONTAINER PRINCIPAL: Cálculo de altura idêntico ao Código 1 */
-        .main-container {
-            display: flex;
-            gap: 20px;
-            padding: 15px 3%;
-            height: calc(100vh - 230px); 
-            align-items: stretch;
-        }
+        /* Legenda */
+        .legend { display: flex; gap: 20px; margin-top: 20px; font-size: 10px; font-weight: 700; color: var(--texto-secundario); justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .box { width: 14px; height: 14px; border-radius: 3px; }
 
-        .map-section {
-            flex: 1.5; 
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .report-section {
-            flex: 1; 
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden; 
-        }
-
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-
-        footer {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #94a3b8;
-        }
-
-        /* Responsividade mantida conforme Código 1 */
-        @media (max-width: 1100px) {
-            body { overflow-y: auto; }
-            .main-container { flex-direction: column; height: auto; }
-            .map-section, .report-section { height: 500px; flex: none; }
-            .kpi-grid { grid-template-columns: 1fr 1fr; height: auto; }
-        }
+        /* Tabela de Resumo */
+        .summary-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .summary-table th { text-align: left; padding: 12px; background: #f8fafc; color: var(--primaria); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; }
+        .summary-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+        .row-total { background: #eff6ff; font-weight: 800; color: var(--primaria); font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <img src="LogomarcaAgroSB.png" alt="AgroSB" height="30">
-            <h1 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Reforma de pastagem</h1>
+    <div class="container">
+        <div class="header">
+            <h1 class="title" id="titulo-topo">Monitoramento Correntão - AgroSB</h1>
+            <div class="date-info">
+                <span id="data-inicio">📅 INÍCIO: --/--/----</span>
+                <span id="data-atualizacao">🔄 ATUALIZAÇÃO: --/--/----</span>
+            </div>
         </div>
-        <a href="index.html" class="btn-voltar">← Voltar</a>
-    </header>
 
-    <section class="kpi-grid">
-        <div class="kpi-card">
-            <span>Total Realizado</span>
-            <h2>1.300,00 ha</h2>
+        <div class="overall-section">
+            <span class="overall-label">Execução Consolidada (Total Planejado vs Realizado)</span>
+            <div class="overall-bar">
+                <div id="execucao-geral-bar" class="done-main" style="width: 0%;">Carregando dados...</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; font-weight: 700;">
+                <span id="meta-valor" style="color: var(--planejado);">META: -- ha</span>
+                <span id="exec-valor" style="color: var(--concluido);">EXECUTADO: -- ha</span>
+            </div>
         </div>
-        <div class="kpi-card" style="border-bottom-color: #27ae60;">
-            <span>Média Diária</span>
-            <h2>18,84 ha</h2>
-        </div>
-        <div class="kpi-card" style="border-bottom-color: #3b82f6;">
-            <span>Progresso</span>
-            <h2 style="color: #27ae60;">48,21%</h2>
-        </div>
-        <div class="kpi-card" style="border-bottom-color: #FF3D00;">
-            <span>Previsão de Término</span>
-            <h2 style="font-size: 15px;">09/06/2026</h2>
-        </div>
-        <div class="kpi-card" style="border-bottom-color: #FF3D00;">
-            <span>Atualização</span>
-            <h2 style="font-size: 15px;">27/03/2026</h2>
-        </div>
-    </section>
 
-    <div class="main-container">
-        <section class="map-section">
-            <iframe src="MR/index.html"></iframe>
-        </section>
+        <div class="column-header">
+            <div class="col-name">Setor / Retiro / Áreas</div>
+            <div class="col-progress">Progresso da Operação (Executado s/ Planejado)</div>
+        </div>
 
-        <section class="report-section">
-            <iframe src="GR.html"></iframe>
-        </section>
+        <div id="lista-retiros" class="retiro-list">
+            </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="box" style="background:var(--total-area); border: 1px solid #cbd5e1;"></div> Área Total do Retiro</div>
+            <div class="legend-item"><div class="box" style="background:var(--planejado)"></div> Meta Planejada</div>
+            <div class="legend-item"><div class="box" style="background:var(--concluido)"></div> Realizado (Concluído)</div>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Resumo Financeiro e Operacional</th>
+                    <th style="text-align:right">Valor</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-resumo">
+                </tbody>
+        </table>
     </div>
 
-    <footer>
-        AgroSB-LAGOA DO TRIUNFO | Supervisão de Topografia e Agricultura de Precisão
-    </footer>
+    <script>
+        // ATENÇÃO: COLOQUE SUA URL DO GOOGLE APPS SCRIPT AQUI ABAIXO
+        const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec";
 
+        async function carregarDashboard() {
+            try {
+                const resposta = await fetch(urlAPI, { method: 'GET', cache: 'no-store' });
+                const dados = await resposta.json();
+
+                if (dados.erro) {
+                    document.getElementById('titulo-topo').innerText = "Erro: " + dados.erro;
+                    return;
+                }
+
+                // 1. Atualizar Topo
+                document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
+                document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
+                
+                const metaG = parseFloat(dados.info.meta_global || 0);
+                const execG = parseFloat(dados.info.executado_global || 0);
+                const percG = metaG > 0 ? ((execG / metaG) * 100).toFixed(1) : 0;
+
+                document.getElementById('meta-valor').innerText = `META GLOBAL: ${metaG.toLocaleString('pt-BR')} ha`;
+                document.getElementById('exec-valor').innerText = `EXECUTADO TOTAL: ${execG.toLocaleString('pt-BR')} ha`;
+                
+                const barraGeral = document.getElementById('execucao-geral-bar');
+                barraGeral.style.width = percG + "%";
+                barraGeral.innerText = `${execG.toLocaleString('pt-BR')} ha (${percG}% da Meta Global)`;
+
+                // 2. Renderizar Retiros (Automatizado para novos cadastros)
+                const container = document.getElementById('lista-retiros');
+                container.innerHTML = "";
+
+                dados.retiros.forEach(r => {
+                    // r.p_meta e r.p_exec vêm calculados do Apps Script
+                    // Ajuste para garantir que a barra verde apareça dentro da vermelha proporcionalmente
+                    const larguraVerdeReal = (r.p_exec * r.p_meta / 100);
+
+                    container.innerHTML += `
+                        <div class="retiro-block">
+                            <div class="label-side">
+                                <span class="name">${r.nome}</span>
+                                <div class="details">
+                                    Total: ${r.area_total.toLocaleString('pt-BR')} ha | 
+                                    Plan: ${r.area_plan.toLocaleString('pt-BR')} ha
+                                </div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-container">
+                                    <div class="fill-planejado" style="width: ${r.p_meta}%"></div>
+                                    <div class="bar-fill" style="background:var(--concluido); width: ${larguraVerdeReal}%">
+                                        ${r.p_exec.toFixed(1)}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // 3. Tabela de Resumo
+                const tabela = document.getElementById('tabela-resumo');
+                tabela.innerHTML = `
+                    <tr><td>Total Planejado da Safra</td><td style="text-align:right"><b>${metaG.toLocaleString('pt-BR')} ha</b></td></tr>
+                    <tr><td>Total Executado até o Momento</td><td style="text-align:right"><b>${execG.toLocaleString('pt-BR')} ha</b></td></tr>
+                    <tr class="row-total">
+                        <td>ÁREA BASE DOS RETIROS (CÉLULA C2)</td>
+                        <td style="text-align:right">${Number(dados.info.area_base || 0).toLocaleString('pt-BR')} ha</td>
+                    </tr>
+                `;
+
+            } catch (erro) {
+                console.error("Erro na carga:", erro);
+                document.getElementById('titulo-topo').innerText = "Erro de Conexão com a Planilha";
+            }
+        }
+
+        // Inicia e define intervalo de 5 minutos
+        window.onload = carregarDashboard;
+        setInterval(carregarDashboard, 300000);
+    </script>
 </body>
 </html>
