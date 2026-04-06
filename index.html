@@ -1,126 +1,239 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento de Cercas - AgroSB</title>
+    <title>Painel de Operações | AgroSB - LAGOA DO TRIUNFO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2e7d32;
-            --bg: #f5f5f5;
-            --card: #ffffff;
+            /* Paleta extraída da imagem CyberX */
+            --bg-dark: #0a061a;        /* Fundo principal profundo */
+            --sidebar-bg: #130d2b;     /* Fundo dos cards e menus */
+            --accent-purple: #6c42f5;  /* Roxo destaque principal */
+            --accent-blue: #00d4ff;    /* Azul elétrico para KPIs */
+            --accent-pink: #9d50bb;    /* Rosa/Roxo para detalhes */
+            --text-main: #ffffff;      /* Texto branco puro */
+            --text-muted: #8e89a5;     /* Texto secundário acinzentado */
+            --card-border: rgba(255, 255, 255, 0.08);
         }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 800px; background: var(--card); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #333; text-transform: uppercase; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 0; }
-        
-        .header-info { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
-        .badge { background: #e8f5e9; padding: 8px 12px; border-radius: 6px; font-size: 0.85em; color: #2e7d32; font-weight: bold; border: 1px solid #c8e6c9; }
 
-        .main-status { background: #4caf50; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 25px; transition: all 0.3s; }
-        .loading { background: #ffa000 !important; animation: pulse 1.5s infinite; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
 
-        .retiro-block { margin-bottom: 20px; }
-        .label-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; color: #444; }
-        .bar-container { background: #eee; height: 24px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd; }
-        .segment { background: linear-gradient(90deg, #4caf50, #81c784); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.85em; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); transition: width 1s ease-in-out; }
+        /* CABEÇALHO SUPERIOR */
+        header {
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-        
-        .footer-legend { display: flex; gap: 15px; font-size: 0.8em; margin-top: 20px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
-        .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 5px; }
+        .logo-area { display: flex; align-items: center; gap: 120px; }
+        .logo-area img { height: 55px; filter: brightness(0) invert(1); }
+        .logo-area h1 { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 1px solid var(--text-muted); padding-left: 20px; }
+
+        /* NAVEGAÇÃO SUPERIOR */
+        nav { display: flex; gap: 10px; }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { 
+            background: rgba(108, 66, 245, 0.2); 
+            color: var(--accent-blue); 
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+        }
+
+        /* ÁREA DE INDICADORES (KPIs) */
+        .kpi-section {
+            background: var(--bg-dark);
+            padding: 25px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .kpi-box { 
+            border-left: 4px solid var(--accent-purple); 
+            padding: 15px;
+            background: var(--sidebar-bg);
+            border-radius: 0 12px 12px 0;
+            transition: 0.3s;
+        }
+        .kpi-box:hover { background: rgba(255,255,255,0.05); }
+        .kpi-box span { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .kpi-box h2 { font-size: 24px; color: var(--text-main); margin: 5px 0; }
+        .kpi-box p { font-size: 11px; font-weight: 600; color: var(--accent-blue); }
+
+        /* CONTEÚDO PRINCIPAL */
+        main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
+
+        .welcome-msg { margin-bottom: 40px; }
+        .welcome-msg h2 { font-size: 24px; color: var(--text-main); font-weight: 300; }
+        .welcome-msg p { color: var(--text-muted); font-size: 14px; }
+
+        /* GRID DE CARDS OPERACIONAIS */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--sidebar-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        .card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(108, 66, 245, 0.15);
+        }
+
+        .card-img {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+        }
+
+        .card-content { padding: 30px; }
+        .card-content h3 { font-size: 16px; color: var(--text-main); text-transform: uppercase; margin-bottom: 15px; font-weight: 800; letter-spacing: 0.5px; }
+        .card-content p { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; min-height: 60px; }
+
+        .btn-action {
+            display: block;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            border: 1px solid var(--card-border);
+        }
+        .btn-action:hover { 
+            background: var(--accent-purple); 
+            color: white; 
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(108, 66, 245, 0.4);
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 40px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            background: var(--sidebar-bg);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Monitoramento de Cercas - AgroSB</h2>
-    
-    <div class="header-info">
-        <div class="badge" id="data-inicio">📅 INÍCIO: --/--/----</div>
-        <div class="badge" id="data-atualizacao">🔄 ATUALIZAÇÃO: --/--/----</div>
-        <div class="badge" style="background: #f3f3f3; color: #555;">🎯 META: 21.000 m/mês</div>
-    </div>
+    <header>
+        <div class="logo-area">
+            <img src="LogomarcaAgroSB.png" alt="AgroSB">
+            <h1>Gestão Lagoa do Triunfo</h1>
+        </div>
+        <nav>
+            <a href="index.html" class="nav-link active">Voltar</a>
+            <a href="CS.html" class="nav-link">Cercas</a>
+            <a href="RP.html" class="nav-link">Correntão</a>
+            <a href="aplicacao-herbicida.html" class="nav-link">Herbicida</a>
+        </nav>
+    </header>
 
-    <div id="barra-geral" class="main-status loading">Sincronizando com Google Sheets...</div>
+    <section class="kpi-section">
+        <div class="kpi-box">
+            <span>Cercas Totais</span>
+            <h2>105 km</h2>
+            <p>Safra 2026</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: var(--accent-blue);">
+            <span>Limpeza Correntão</span>
+            <h2>1.300 ha</h2>
+            <p style="color: var(--accent-blue);">Área Monitorada</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: #22c55e;">
+            <span>Herbicida</span>
+            <h2>92.4%</h2>
+            <p style="color: #22c55e;">Concluído</p>
+        </div>
+        <div class="kpi-box" style="border-left-color: var(--accent-pink);">
+            <span>PRODES/Reserva</span>
+            <h2>0 km</h2>
+            <p style="color: var(--accent-pink);">Sem Alertas</p>
+        </div>
+    </section>
 
-    <div id="lista-retiros">
+    <main>
+        <div class="welcome-msg">
+            <h2>Monitoramento em Tempo Real</h2>
+            <p>Selecione uma operação abaixo para acessar mapas dinâmicos e relatórios técnicos com interface CyberX.</p>
         </div>
 
-    <div class="footer-legend">
-        <span><span class="dot" style="background:#fdd835"></span> Reforma</span>
-        <span><span class="dot" style="background:#4caf50"></span> Nova</span>
-        <span><span class="dot" style="background:#f4511e"></span> Desmanche</span>
-        <span><span class="dot" style="background:#039be5"></span> Aceiro</span>
-    </div>
-</div>
-
-<script>
-    // Adicionamos um "carimbo de tempo" (timestamp) para o Google não mandar dado velho
-    const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec"; 
-
-    async function carregarDashboard() {
-        const barraGeral = document.getElementById('barra-geral');
-        const container = document.getElementById('lista-retiros');
-
-        try {
-            // "cache: no-store" força o navegador a buscar na planilha, ignorando erros de cache do Chrome
-            const resposta = await fetch(urlAPI, {
-                method: 'GET',
-                redirect: 'follow',
-                cache: 'no-store' 
-            });
-
-            if (!resposta.ok) throw new Error('Falha na comunicação');
-            const dados = await resposta.json();
+        <div class="dashboard-grid">
             
-            // Validação de segurança: se a planilha estiver vazia, avisa o usuário
-            if (dados.erro) {
-                barraGeral.style.background = "#ffa000";
-                barraGeral.innerText = "Atenção: " + dados.erro;
-                return;
-            }
+            <div class="card">
+                <div class="card-img"></div>
+                <div class="card-content">
+                    <h3>Construção de Cercas</h3>
+                    <p>Status físico da quilometragem de cercas em áreas de Reserva e divisas estratégicas da Lagoa do Triunfo.</p>
+                    <a href="CS.html" class="btn-action">Ver Gráficos e Tabelas</a>
+                </div>
+            </div>
 
-            // Renderização das Datas
-            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
-            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
-            
-            // Barra Principal
-            barraGeral.classList.remove('loading');
-            barraGeral.style.background = "#4caf50";
-            barraGeral.innerText = `Produção Total: ${Number(dados.info.operacao).toLocaleString('pt-BR')} m`;
+            <div class="card">
+                <div class="card-img" style="background: var(--accent-blue);"></div>
+                <div class="card-content">
+                    <h3>Operação Correntão</h3>
+                    <p>Acompanhamento detalhado da supressão vegetal autorizada por retiro e produtividade das frentes de trabalho.</p>
+                    <a href="RP.html" class="btn-action">Abrir Mapa e Relatórios</a>
+                </div>
+            </div>
 
-            // Renderização dos Retiros
-            container.innerHTML = dados.retiros.map(r => {
-                let p = parseFloat(r.perc);
-                // Se na planilha estiver 0.5, vira 50%. Se estiver 50, continua 50.
-                let porcentagem = p <= 1 ? (p * 100).toFixed(1) : p.toFixed(1);
+            <div class="card">
+                <div class="card-img" style="background: #22c55e;"></div>
+                <div class="card-content">
+                    <h3>Aplicação de Herbicida</h3>
+                    <p>Controle preciso de áreas tratadas para regeneração produtiva e manutenção de pastagens.</p>
+                    <a href="aplicacao_herbicida.html" class="btn-action">Abrir Mapa de Aplicação</a>
+                </div>
+            </div>
 
-                return `
-                    <div class="retiro-block">
-                        <div class="label-row">
-                            <span class="name">${r.nome}</span>
-                            <span class="area">${Number(r.executado).toLocaleString('pt-BR')} / ${Number(r.total).toLocaleString('pt-BR')} m</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="segment" style="width: ${porcentagem}%">
-                                ${porcentagem}%
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        </div>
+    </main>
 
-        } catch (erro) {
-            console.error("Erro:", erro);
-            barraGeral.classList.remove('loading');
-            barraGeral.style.background = "#d32f2f";
-            barraGeral.innerText = "Erro de Sincronização. Tente Ctrl+F5 ou use o Edge.";
-        }
-    }
-
-    window.onload = carregarDashboard;
-</script>
+    <footer>
+        <p><strong>AgroSB - LAGOA DO TRIUNFO</strong> | Topografia e Agricultura de Precisão</p>
+        <p>Dados atualizados em: 03 de Abril de 2026</p>
+    </footer>
 
 </body>
 </html>
