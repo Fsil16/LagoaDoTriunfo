@@ -123,72 +123,53 @@
     </div>
 
     <script>
-        const urlAPI = "https://script.google.com/macros/s/AKfycbyJwFrDgGcJqe94vWLklyDqhby8MvSs_cN-iuQVP2cnHZzqnFdVlorbuQd1b6Bk1JkW/exec";
+    const urlAPI = "SUA_NOVA_URL_AQUI"; // Cole aqui a URL gerada no deploy
 
-        function formatarData(isoString) {
-            if (!isoString || isoString.includes("--")) return "--/--/----";
-            try {
-                // Se a data já vier formatada do Apps Script (dd/MM/yyyy), retorna ela mesma
-                if (isoString.includes('/')) return isoString;
-                const d = new Date(isoString);
-                return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            } catch (e) { return isoString; }
-        }
+    async function carregarDashboard() {
+        try {
+            const resposta = await fetch(urlAPI, { cache: 'no-store' });
+            const dados = await resposta.json();
 
-        async function carregarDashboard() {
-            const barraGeral = document.getElementById('barra-geral');
-            try {
-                // Removemos o cache bust do parâmetro para testar a conexão pura
-                const resposta = await fetch(urlAPI, {
-                    method: 'GET',
-                    // Importante: NÃO use 'mode: cors' aqui, deixe o padrão do navegador
-                    redirect: 'follow'
-                });
+            // 1. Topo do Dashboard
+            document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
+            document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
+            
+            const metaG = dados.info.meta_global;
+            const execG = dados.info.executado_global;
+            const percG = ((execG / metaG) * 100).toFixed(1);
 
-                if (!resposta.ok) throw new Error('Erro na rede');
-                
-                const dados = await resposta.json();
-                console.log("Dados carregados com sucesso!", dados);
+            document.getElementById('meta-valor').innerText = `🎯 META: ${metaG.toLocaleString('pt-BR')} ha`;
+            
+            const barraGeral = document.getElementById('execucao-geral-bar');
+            barraGeral.style.width = percG + "%";
+            barraGeral.innerText = `${execG.toLocaleString('pt-BR')} ha (${percG}%)`;
 
-                // Preenchimento do HTML
-                document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + formatarData(dados.info.inicio);
-                document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + formatarData(dados.info.atualizacao);
-                barraGeral.innerText = `Produção: ${dados.info.operacao || 0} Metros`;
+            // 2. Lista de Retiros Dinâmica
+            const container = document.getElementById('lista-retiros');
+            container.innerHTML = "";
 
-                const containerRetiros = document.getElementById('lista-retiros');
-                containerRetiros.innerHTML = ""; 
-
-                if (dados.retiros && dados.retiros.length > 0) {
-                    let htmlFinal = "";
-                    dados.retiros.forEach(r => {
-                        const largura = parseFloat(r.perc) || 0;
-                        htmlFinal += `
-                            <div class="retiro-block">
-                                <div class="label-row">
-                                    <span class="name">${r.nome}</span>
-                                    <span class="area">${r.executado} / ${r.total} m</span>
+            dados.retiros.forEach(r => {
+                container.innerHTML += `
+                    <div class="retiro-block">
+                        <div class="label-row">
+                            <span class="name">${r.nome}</span>
+                            <span class="area">Total: ${r.area_total.toLocaleString('pt-BR')} ha | Plan: ${r.area_plan} ha</span>
+                        </div>
+                        <div class="bar-wrapper">
+                            <div class="bar-container">
+                                <div class="fill-planejado" style="width: ${r.p_meta}%"></div>
+                                <div class="bar-fill" style="background:#27ae60; width: ${(r.p_exec * r.p_meta / 100)}%">
+                                    ${r.p_exec.toFixed(0)}%
                                 </div>
-                                <div class="bar-wrapper">
-                                    <div class="bar-container">
-                                        <div class="segment" style="background:var(--cerca-nova); --seg-width: ${largura}%; width: ${largura}%">
-                                            ${largura}%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                    containerRetiros.innerHTML = htmlFinal;
-                }
-            } catch (erro) {
-                console.error("Erro detalhado:", erro);
-                barraGeral.innerText = "Tentando conectar com a planilha...";
-                // Tenta novamente em 10 segundos se falhar
-                setTimeout(carregarDashboard, 10000);
-            }
-        }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
 
-        carregarDashboard();
-        setInterval(carregarDashboard, 300000);
-    </script>
+        } catch (e) { console.error("Erro:", e); }
+    }
+    window.onload = carregarDashboard;
+</script>
 </body>
 </html>
