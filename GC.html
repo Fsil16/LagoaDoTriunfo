@@ -14,41 +14,80 @@
             --texto-secundario: #64748b;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 15px; color: #1e293b; }
-        .container { background: var(--fundo); padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-width: 1100px; margin: auto; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 10px; color: #1e293b; }
         
-        .header { border-bottom: 3px solid var(--primaria); margin-bottom: 20px; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .title { font-weight: 800; font-size: 18px; text-transform: uppercase; margin: 0; color: var(--primaria); letter-spacing: 1px; }
-        .date-info { font-size: 11px; color: var(--texto-secundario); display: flex; gap: 20px; font-weight: 600; }
+        .container { 
+            background: var(--fundo); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            max-width: 1100px; 
+            margin: auto; 
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); 
+        }
+        
+        /* Cabeçalho Responsivo */
+        .header { 
+            border-bottom: 3px solid var(--primaria); 
+            margin-bottom: 20px; 
+            padding-bottom: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .title { font-weight: 800; font-size: 1.2rem; text-transform: uppercase; margin: 0; color: var(--primaria); letter-spacing: 1px; }
+        .date-info { font-size: 10px; color: var(--texto-secundario); display: flex; gap: 15px; font-weight: 600; flex-wrap: wrap; }
 
-        /* Barras */
+        /* Barra Consolidada */
         .overall-section { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        .overall-label { font-size: 12px; font-weight: 800; margin-bottom: 10px; display: block; color: var(--primaria); text-transform: uppercase; }
+        .overall-label { font-size: 11px; font-weight: 800; margin-bottom: 10px; display: block; color: var(--primaria); text-transform: uppercase; }
         .overall-bar { height: 30px; background: var(--total-area); border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; }
-        .done-main { position: absolute; background: var(--concluido); height: 100%; color: white; font-size: 11px; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: width 1s ease; }
+        .done-main { position: absolute; background: var(--concluido); height: 100%; color: white; font-size: 11px; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: width 1s ease; white-space: nowrap; }
 
-        .column-header { display: flex; padding: 10px 15px; background: var(--primaria); border-radius: 6px 6px 0 0; color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Cabeçalho das Colunas (Escondido em telas muito pequenas) */
+        .column-header { display: flex; padding: 10px 15px; background: var(--primaria); border-radius: 6px 6px 0 0; color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .col-name { width: 220px; }
         .col-progress { flex-grow: 1; text-align: center; }
 
-        .retiro-list { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; background: white; padding: 10px 0; }
-        .retiro-block { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; gap: 15px; }
+        /* Blocos de Retiros */
+        .retiro-list { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; background: white; padding: 5px 0; }
+        .retiro-block { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #f1f5f9; 
+            gap: 15px; 
+        }
         
         .label-side { width: 220px; flex-shrink: 0; }
         .name { font-weight: 800; color: var(--primaria); font-size: 12px; display: block; }
         .details { font-size: 10px; color: var(--texto-secundario); }
 
-        .bar-wrapper { flex-grow: 1; }
+        .bar-wrapper { flex-grow: 1; min-width: 150px; }
         .bar-container { height: 24px; background: var(--total-area); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; }
         .fill-planejado { position: absolute; background: var(--planejado); height: 100%; z-index: 1; opacity: 0.4; border-right: 2px solid var(--planejado); }
-        .bar-fill { position: absolute; height: 100%; background: var(--concluido); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: white; z-index: 2; }
+        .bar-fill { position: absolute; height: 100%; background: var(--concluido); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; z-index: 2; }
 
-        /* Tabela Resumo Operacional */
+        /* Tabela Resumo */
         .summary-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 12px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .summary-table th { text-align: left; padding: 12px; background: #f8fafc; color: var(--primaria); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; font-weight: 800; }
+        .summary-table th { text-align: left; padding: 12px; background: #f8fafc; color: var(--primaria); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; }
         .summary-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
         .row-highlight { background: #f0fdf4; font-weight: 800; color: var(--concluido); }
         .text-right { text-align: right; font-weight: 700; }
+
+        /* MÍDIA QUERIES PARA CELULAR */
+        @media (max-width: 600px) {
+            .column-header { display: none; } /* Esconde o cabeçalho de colunas no celular */
+            .retiro-block { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .label-side { width: 100%; }
+            .bar-wrapper { width: 100%; }
+            .title { font-size: 1rem; }
+            .header { align-items: flex-start; }
+            .summary-table { font-size: 11px; }
+        }
     </style>
 </head>
 <body>
@@ -63,9 +102,9 @@
         </div>
 
         <div class="overall-section">
-            <span class="overall-label">Execução Consolidada (Realizado vs Meta Global)</span>
+            <span class="overall-label">Execução Consolidada (Total Realizado)</span>
             <div class="overall-bar">
-                <div id="execucao-geral-bar" class="done-main" style="width: 0%;">Carregando...</div>
+                <div id="execucao-geral-bar" class="done-main" style="width: 0%;">Lendo dados...</div>
             </div>
         </div>
 
@@ -78,18 +117,16 @@
 
         <table class="summary-table">
             <thead>
-                <tr>
-                    <th colspan="2">Resumo Operacional e Projeções</th>
-                </tr>
+                <tr><th colspan="2">Resumo Operacional e Projeções</th></tr>
             </thead>
             <tbody id="tabela-resumo">
                 <tr><td>Área Total Planejada (Meta Safra)</td><td class="text-right" id="val-meta">-- ha</td></tr>
-                <tr><td>Área Executada até o Momento</td><td class="text-right" id="val-exec">-- ha</td></tr>
+                <tr><td>Área Executada</td><td class="text-right" id="val-exec">-- ha</td></tr>
                 <tr><td>Área Restante</td><td class="text-right" id="val-restante">-- ha</td></tr>
-                <tr><td>Dias de Operação Corridos</td><td class="text-right" id="val-dias">-- dias</td></tr>
-                <tr><td>Média Diária de Produção</td><td class="text-right" id="val-media">-- ha/dia</td></tr>
+                <tr><td>Dias de Operação</td><td class="text-right" id="val-dias">-- dias</td></tr>
+                <tr><td>Média Diária</td><td class="text-right" id="val-media">-- ha/dia</td></tr>
                 <tr class="row-highlight">
-                    <td>PREVISÃO ESTIMADA DE TÉRMINO</td>
+                    <td>PREVISÃO DE TÉRMINO</td>
                     <td class="text-right" id="val-previsao">--/--/----</td>
                 </tr>
             </tbody>
@@ -100,6 +137,7 @@
         const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec";
 
         function parseData(str) {
+            if(!str) return new Date();
             const partes = str.split('/');
             return new Date(partes[2], partes[1] - 1, partes[0]);
         }
@@ -109,23 +147,20 @@
                 const resposta = await fetch(urlAPI, { method: 'GET', cache: 'no-store' });
                 const dados = await resposta.json();
 
-                // Cálculos de Tempo
                 const dInicio = parseData(dados.info.inicio);
                 const dHoje = new Date();
                 const diffDias = Math.ceil(Math.abs(dHoje - dInicio) / (1000 * 60 * 60 * 24)) || 1;
 
-                // Dados Globais
                 const metaG = parseFloat(dados.info.meta_global || 0);
                 const execG = parseFloat(dados.info.executado_global || 0);
                 const restante = metaG - execG;
                 const mediaDiaria = (execG / diffDias).toFixed(1);
 
-                // Preenchimento da Tabela de Resumo
                 document.getElementById('data-inicio').innerText = "📅 INÍCIO: " + dados.info.inicio;
                 document.getElementById('data-atualizacao').innerText = "🔄 ATUALIZAÇÃO: " + dados.info.atualizacao;
                 document.getElementById('val-meta').innerText = metaG.toLocaleString('pt-BR') + " ha";
                 document.getElementById('val-exec').innerText = execG.toLocaleString('pt-BR') + " ha";
-                document.getElementById('val-restante').innerText = (restante > 0 ? restante.toFixed(1) : 0).toLocaleString('pt-BR') + " ha";
+                document.getElementById('val-restante').innerText = (restante > 0 ? restante : 0).toLocaleString('pt-BR', {minimumFractionDigits: 1}) + " ha";
                 document.getElementById('val-dias').innerText = diffDias + " dias";
                 document.getElementById('val-media').innerText = mediaDiaria + " ha/dia";
 
@@ -135,16 +170,14 @@
                     dataTermino.setDate(dHoje.getDate() + diasFaltando);
                     document.getElementById('val-previsao').innerText = dataTermino.toLocaleDateString('pt-BR');
                 } else {
-                    document.getElementById('val-previsao').innerText = "Meta Atingida";
+                    document.getElementById('val-previsao').innerText = "Meta Concluída";
                 }
 
-                // Barra Geral
                 const percG = metaG > 0 ? ((execG / metaG) * 100).toFixed(1) : 0;
                 const barraGeral = document.getElementById('execucao-geral-bar');
                 barraGeral.style.width = Math.min(percG, 100) + "%";
                 barraGeral.innerText = `${execG.toLocaleString('pt-BR')} ha (${percG}%)`;
 
-                // Retiros Proporcionais
                 const maiorAreaTotal = Math.max(...dados.retiros.map(r => r.area_total));
                 const container = document.getElementById('lista-retiros');
                 container.innerHTML = "";
@@ -173,7 +206,7 @@
                 });
 
             } catch (e) {
-                console.error("Erro ao carregar dados:", e);
+                console.error("Erro:", e);
             }
         }
 
