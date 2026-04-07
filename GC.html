@@ -27,7 +27,6 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); 
         }
         
-        /* Cabeçalho Responsivo */
         .header { 
             border-bottom: 3px solid var(--primaria); 
             margin-bottom: 20px; 
@@ -41,52 +40,57 @@
         .title { font-weight: 800; font-size: 1.2rem; text-transform: uppercase; margin: 0; color: var(--primaria); letter-spacing: 1px; }
         .date-info { font-size: 10px; color: var(--texto-secundario); display: flex; gap: 15px; font-weight: 600; flex-wrap: wrap; }
 
-        /* Barra Consolidada */
         .overall-section { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
         .overall-label { font-size: 11px; font-weight: 800; margin-bottom: 10px; display: block; color: var(--primaria); text-transform: uppercase; }
         .overall-bar { height: 30px; background: var(--total-area); border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; }
-        .done-main { position: absolute; background: var(--concluido); height: 100%; color: white; font-size: 11px; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: width 1s ease; white-space: nowrap; }
+        .done-main { position: absolute; background: var(--concluido); height: 100%; color: white; font-size: 11px; z-index: 3; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: width 1s ease; white-space: nowrap; }
 
-        /* Cabeçalho das Colunas (Escondido em telas muito pequenas) */
         .column-header { display: flex; padding: 10px 15px; background: var(--primaria); border-radius: 6px 6px 0 0; color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .col-name { width: 220px; }
-        .col-progress { flex-grow: 1; text-align: center; }
+        .col-progress { flex-grow: 1; text-align: left; padding-left: 20px; }
 
-        /* Blocos de Retiros */
         .retiro-list { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; background: white; padding: 5px 0; }
         .retiro-block { 
             display: flex; 
             align-items: center; 
-            padding: 12px 15px; 
+            padding: 15px; 
             border-bottom: 1px solid #f1f5f9; 
-            gap: 15px; 
+            gap: 20px; 
         }
         
         .label-side { width: 220px; flex-shrink: 0; }
-        .name { font-weight: 800; color: var(--primaria); font-size: 12px; display: block; }
-        .details { font-size: 10px; color: var(--texto-secundario); }
+        .name { font-weight: 800; color: var(--primaria); font-size: 12px; display: block; text-transform: uppercase; }
+        .details { font-size: 10px; color: var(--texto-secundario); margin-top: 2px; }
 
-        .bar-wrapper { flex-grow: 1; min-width: 150px; }
-        .bar-container { height: 24px; background: var(--total-area); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; }
-        .fill-planejado { position: absolute; background: var(--planejado); height: 100%; z-index: 1; opacity: 0.4; border-right: 2px solid var(--planejado); }
-        .bar-fill { position: absolute; height: 100%; background: var(--concluido); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; z-index: 2; }
+        .bar-wrapper { flex-grow: 1; display: flex; align-items: center; gap: 15px; }
+        .bar-container { height: 26px; background: var(--total-area); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #cbd5e1; flex-grow: 0; }
+        
+        .fill-planejado { position: absolute; background: var(--planejado); height: 100%; z-index: 1; opacity: 0.25; border-right: 2px solid var(--planejado); transition: width 1s ease; }
+        .bar-fill { position: absolute; height: 100%; background: var(--concluido); z-index: 2; transition: width 1s ease; box-shadow: 2px 0 4px rgba(0,0,0,0.1); }
+        
+        .bar-values { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--primaria); 
+            min-width: 110px; 
+            text-align: right; 
+            white-space: nowrap;
+        }
 
-        /* Tabela Resumo */
         .summary-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 12px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
         .summary-table th { text-align: left; padding: 12px; background: #f8fafc; color: var(--primaria); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; }
         .summary-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
         .row-highlight { background: #f0fdf4; font-weight: 800; color: var(--concluido); }
         .text-right { text-align: right; font-weight: 700; }
 
-        /* MÍDIA QUERIES PARA CELULAR */
-        @media (max-width: 600px) {
-            .column-header { display: none; } /* Esconde o cabeçalho de colunas no celular */
-            .retiro-block { flex-direction: column; align-items: flex-start; gap: 8px; }
+        @media (max-width: 768px) {
+            .column-header { display: none; }
+            .retiro-block { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px; }
             .label-side { width: 100%; }
-            .bar-wrapper { width: 100%; }
-            .title { font-size: 1rem; }
-            .header { align-items: flex-start; }
-            .summary-table { font-size: 11px; }
+            .bar-wrapper { width: 100%; flex-direction: column; align-items: flex-start; gap: 8px; }
+            .bar-container { width: 100% !important; } 
+            .bar-values { width: 100%; text-align: left; font-size: 10px; border-top: 1px solid #f1f5f9; padding-top: 5px; }
+            .header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -102,7 +106,7 @@
         </div>
 
         <div class="overall-section">
-            <span class="overall-label">Execução Consolidada (Total Realizado)</span>
+            <span class="overall-label">Execução Consolidada (Progresso Geral Safra)</span>
             <div class="overall-bar">
                 <div id="execucao-geral-bar" class="done-main" style="width: 0%;">Lendo dados...</div>
             </div>
@@ -110,7 +114,7 @@
 
         <div class="column-header">
             <div class="col-name">Setor / Retiro</div>
-            <div class="col-progress">Proporção Real e Progresso</div>
+            <div class="col-progress">Proporção Real (Área Total vs Executado)</div>
         </div>
 
         <div id="lista-retiros" class="retiro-list"></div>
@@ -134,7 +138,7 @@
     </div>
 
     <script>
-        const urlAPI = "https://script.google.com/macros/s/AKfycbwJf26HEroJtLZauuNKNlq95g7CZ1xRW3zf-VCgl7EbMjb0AxTkV2SBoNANtGPdCJ0S/exec";
+        const urlAPI = "https://script.google.com/macros/s/AKfycbwJGk0fL_0e2Cu0DMJu4wRXgk1qYJ8K_WM7vF8IoRQhFRUALYwJ9kGlM0qs2qHhwfre/exec";
 
         function parseData(str) {
             if(!str) return new Date();
@@ -178,27 +182,33 @@
                 barraGeral.style.width = Math.min(percG, 100) + "%";
                 barraGeral.innerText = `${execG.toLocaleString('pt-BR')} ha (${percG}%)`;
 
+                // CÁLCULO PARA AS BARRAS PROPORCIONAIS
                 const maiorAreaTotal = Math.max(...dados.retiros.map(r => r.area_total));
                 const container = document.getElementById('lista-retiros');
                 container.innerHTML = "";
 
                 dados.retiros.forEach(r => {
+                    // Define a largura da barra cinza em relação ao maior retiro
                     const larguraRelativa = (r.area_total / maiorAreaTotal * 100).toFixed(1);
+                    
                     const p_meta_int = (r.area_plan / r.area_total * 100).toFixed(1);
                     const p_exec_int = (r.area_exec / r.area_total * 100).toFixed(1);
+                    const p_progresso_meta = r.area_plan > 0 ? ((r.area_exec / r.area_plan) * 100).toFixed(1) : 0;
 
                     container.innerHTML += `
                         <div class="retiro-block">
                             <div class="label-side">
                                 <span class="name">${r.nome}</span>
-                                <div class="details">Total: ${r.area_total.toLocaleString('pt-BR')} ha</div>
+                                <div class="details">Área Total: ${r.area_total.toLocaleString('pt-BR')} ha</div>
                             </div>
                             <div class="bar-wrapper">
                                 <div class="bar-container" style="width: ${larguraRelativa}%">
                                     <div class="fill-planejado" style="width: ${p_meta_int}%"></div>
-                                    <div class="bar-fill" style="width: ${p_exec_int}%">
-                                        ${p_exec_int > 15 ? p_exec_int + '%' : ''}
-                                    </div>
+                                    <div class="bar-fill" style="width: ${p_exec_int}%"></div>
+                                </div>
+                                <div class="bar-values">
+                                    <strong>${r.area_exec.toLocaleString('pt-BR')} ha</strong> 
+                                    <span style="color: var(--concluido); margin-left: 5px;">(${p_progresso_meta}%)</span>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +216,7 @@
                 });
 
             } catch (e) {
-                console.error("Erro:", e);
+                console.error("Erro ao carregar dashboard:", e);
             }
         }
 
