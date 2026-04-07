@@ -43,7 +43,7 @@
             margin: 0;
         }
         </style>
-        <title></title>
+        <title>Monitoramento AgroSB - Correntão</title>
     </head>
     <body>
         <div id="map">
@@ -57,10 +57,45 @@
         <script src="./resources/ol.js"></script>
         <script src="./resources/ol-layerswitcher.js"></script>
         <script src="resources/photon-geocoder-autocomplete.min.js"></script>
-        <script src="layers/PecuriaV18x1_0.js"></script><script src="layers/CARs__1.js"></script><script src="layers/Pistasdepouso_2.js"></script><script src="layers/Areasmediocorrento19032026_3.js"></script><script src="layers/EstradaJuParancopiar_4.js"></script><script src="layers/ClassificacaoColonos2020_5.js"></script><script src="layers/CasadeTbua_6.js"></script><script src="layers/Pedagio_7.js"></script><script src="layers/Coordenadasdosretiros_8.js"></script>
-        <script src="styles/PecuriaV18x1_0_style.js"></script><script src="styles/CARs__1_style.js"></script><script src="styles/Pistasdepouso_2_style.js"></script><script src="styles/Areasmediocorrento19032026_3_style.js"></script><script src="styles/EstradaJuParancopiar_4_style.js"></script><script src="styles/ClassificacaoColonos2020_5_style.js"></script><script src="styles/CasadeTbua_6_style.js"></script><script src="styles/Pedagio_7_style.js"></script><script src="styles/Coordenadasdosretiros_8_style.js"></script>
+        <script src="layers/Pecuariapecuria_v181_0.js"></script>
+        <script src="layers/Estradasprincipais_1.js"></script>
+        <script src="layers/Corrento2026_2.js"></script>
+        <script src="styles/Pecuariapecuria_v181_0_style.js"></script>
+        <script src="styles/Estradasprincipais_1_style.js"></script>
+        <script src="styles/Corrento2026_2_style.js"></script>
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>        
+
+        <script>
+        // Objeto global para armazenar os status da planilha
+        var statusPlanilha = {};
+
+        async function atualizarMapaComSheets() {
+            // Sua nova URL de implantação
+            const urlAPI = 'https://script.google.com/macros/s/AKfycbznWfiHMcxvr6kSaepTsiuS6nfF-BScqaKjKWfH2sPGIdBy4JOT2hvCQ-Ha0jwfWBXg/exec';
+            
+            try {
+                const response = await fetch(urlAPI);
+                const data = await response.json();
+                
+                // IMPORTANTE: Agora lemos o campo 'mapa' que criamos no Apps Script
+                if (data.mapa) {
+                    statusPlanilha = data.mapa;
+                    console.log("Dados do mapa carregados com sucesso!");
+                }
+
+                // Força o OpenLayers a redesenhar a camada do Correntão com as novas cores
+                if (typeof lyr_Corrento2026_2 !== 'undefined') {
+                    lyr_Corrento2026_2.changed();
+                }
+            } catch (e) {
+                console.error("Erro na integração com Sheets:", e);
+            }
+        }
+
+        // Inicia a busca dos dados
+        atualizarMapaComSheets();
+        </script>
     </body>
 </html>
